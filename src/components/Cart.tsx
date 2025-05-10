@@ -32,8 +32,10 @@ const Cart: React.FC = () => {
     if (item) {
       // Remove old item
       removeItemCompletely(itemId);
-      // Add updated item with new note
-      addToCart({...item, note: editedNote});
+      // Add updated item with new note and PRESERVE the original quantity
+      for (let i = 0; i < item.quantity; i++) {
+        addToCart({...item, note: editedNote});
+      }
     }
     setEditingItemId(null);
     setEditedNote('');
