@@ -34,23 +34,23 @@ export const CustomerDetails: React.FC<CustomerDetailsProps> = ({
           <label className="flex items-center gap-1">
             <input
               type="radio"
-              value="pickup"
-              checked={orderType === 'pickup'}
-              onChange={() => setOrderType('pickup')}
-              className="h-4 w-4"
-            />
-            <span>Para recoger</span>
-          </label>
-          
-          <label className="flex items-center gap-1">
-            <input
-              type="radio"
               value="delivery"
               checked={orderType === 'delivery'}
               onChange={() => setOrderType('delivery')}
               className="h-4 w-4"
             />
             <span>Delivery</span>
+          </label>
+          
+          <label className="flex items-center gap-1">
+            <input
+              type="radio"
+              value="pickup"
+              checked={orderType === 'pickup'}
+              onChange={() => setOrderType('pickup')}
+              className="h-4 w-4"
+            />
+            <span>Para recoger</span>
           </label>
         </div>
       </div>

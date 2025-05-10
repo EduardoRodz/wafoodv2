@@ -7,7 +7,7 @@ import { formatCurrency } from '../../utils/formatCurrency';
 export const useOrderForm = () => {
   const { items, totalAmount } = useCart();
   const [name, setName] = useState('');
-  const [orderType, setOrderType] = useState('pickup'); // pickup or delivery
+  const [orderType, setOrderType] = useState('delivery'); // Changed default to delivery
   const [phone, setPhone] = useState('');
   const [address, setAddress] = useState('');
   const [paymentMethod, setPaymentMethod] = useState('cash'); // cash or transfer
