@@ -3,9 +3,11 @@ import { useState } from 'react';
 import { useCart } from '../../context/CartContext';
 import { config } from '../../config';
 import { formatCurrency } from '../../utils/formatCurrency';
+import { useToast } from '@/hooks/use-toast';
 
 export const useOrderForm = () => {
   const { items, totalAmount } = useCart();
+  const { toast } = useToast();
   const [name, setName] = useState('');
   const [orderType, setOrderType] = useState('delivery'); // Changed default to delivery
   const [phone, setPhone] = useState('');
@@ -13,22 +15,42 @@ export const useOrderForm = () => {
   const [paymentMethod, setPaymentMethod] = useState('cash'); // cash or transfer
   const [cashAmount, setCashAmount] = useState(config.cashDenominations[0].value);
   const [comments, setComments] = useState('');
+  const [formErrors, setFormErrors] = useState({
+    name: false,
+    phone: false,
+    address: false
+  });
+
+  const validateForm = () => {
+    const errors = {
+      name: !name.trim(),
+      phone: orderType === 'delivery' && !phone.trim(),
+      address: orderType === 'delivery' && !address.trim()
+    };
+    
+    setFormErrors(errors);
+    
+    return !Object.values(errors).some(Boolean);
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
     if (items.length === 0) {
-      alert('Agrega productos a tu carrito antes de ordenar');
+      toast({
+        title: "Carrito vacío",
+        description: "Agrega productos a tu carrito antes de ordenar",
+        variant: "destructive"
+      });
       return;
     }
     
-    if (!name) {
-      alert('Por favor ingresa tu nombre');
-      return;
-    }
-    
-    if (orderType === 'delivery' && (!phone || !address)) {
-      alert('Para delivery, ingresa tu teléfono y dirección');
+    if (!validateForm()) {
+      toast({
+        title: "Formulario incompleto",
+        description: "Por favor completa todos los campos requeridos",
+        variant: "destructive"
+      });
       return;
     }
     
@@ -86,6 +108,7 @@ export const useOrderForm = () => {
     setCashAmount,
     comments,
     setComments,
+    formErrors,
     handleSubmit
   };
 };

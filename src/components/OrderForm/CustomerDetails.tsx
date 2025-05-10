@@ -1,5 +1,7 @@
 
-import React from 'react';
+import React, { useState } from 'react';
+import { Input } from '../ui/input';
+import { Label } from '../ui/label';
 
 interface CustomerDetailsProps {
   name: string;
@@ -14,18 +16,38 @@ export const CustomerDetails: React.FC<CustomerDetailsProps> = ({
   orderType,
   setOrderType
 }) => {
+  const [nameError, setNameError] = useState('');
+
+  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setName(e.target.value);
+    if (e.target.value.trim()) {
+      setNameError('');
+    }
+  };
+
+  const handleBlur = () => {
+    if (!name.trim()) {
+      setNameError('Por favor ingresa tu nombre');
+    } else {
+      setNameError('');
+    }
+  };
+
   return (
     <>
-      <div>
-        <label className="block mb-1 text-sm font-medium">Nombre</label>
-        <input
+      <div className="space-y-1">
+        <Label htmlFor="name" className="block text-sm font-medium">Nombre</Label>
+        <Input
+          id="name"
           type="text"
           value={name}
-          onChange={(e) => setName(e.target.value)}
+          onChange={handleNameChange}
+          onBlur={handleBlur}
           placeholder="Tu nombre"
-          className="w-full p-2 border border-gray-300 rounded"
-          required
+          className={`w-full ${nameError ? 'border-red-500 focus-visible:ring-red-500' : 'border-gray-300'}`}
+          aria-invalid={!!nameError}
         />
+        {nameError && <p className="text-red-500 text-xs mt-1">{nameError}</p>}
       </div>
       
       <div>
