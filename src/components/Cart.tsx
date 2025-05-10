@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useCart } from '../context/CartContext';
 import { ShoppingCart, Pencil, Trash2, Plus, Minus } from 'lucide-react';
@@ -131,6 +130,11 @@ const Cart: React.FC = () => {
       
       <Button 
         className="w-full bg-primary hover:bg-accent text-white font-medium py-6 flex items-center justify-center gap-2 mb-4"
+        onClick={() => {
+          // Handle order continuation logic here
+          console.log('Continuing with order');
+          // You could redirect to checkout or show the next step
+        }}
       >
         <ShoppingCart size={20} /> Continuar con el pedido
       </Button>
