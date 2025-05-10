@@ -26,24 +26,17 @@ const FloatingCartButton = () => {
           )}
         </Button>
       </SheetTrigger>
-      <SheetContent className="w-full sm:w-[540px] p-0 overflow-y-auto" side="right">
-        <SheetHeader className="p-6 pb-0">
-          <SheetTitle>Tu Pedido</SheetTitle>
-          <SheetDescription>Revisa tu pedido antes de enviarlo</SheetDescription>
+      <SheetContent className="w-full sm:w-[400px] p-0 overflow-y-auto font-sans" side="right">
+        <SheetHeader className="p-6 pb-2 text-left">
+          <SheetTitle className="text-xl font-semibold">Tu Pedido</SheetTitle>
+          <SheetDescription className="text-base text-gray-600">Revisa tu pedido antes de enviarlo</SheetDescription>
         </SheetHeader>
         
         <div className="p-6 space-y-6">
           <div className="space-y-4">
             <Cart />
-            <OrderForm />
-          </div>
-          
-          <div className="pt-4 flex justify-end">
-            <SheetClose asChild>
-              <Button variant="outline" className="mr-2">
-                Cerrar
-              </Button>
-            </SheetClose>
+            {/* Temporarily hiding the order form to match the image design */}
+            {/* <OrderForm /> */}
           </div>
         </div>
       </SheetContent>

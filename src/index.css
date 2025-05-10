@@ -14,7 +14,7 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
 
-    --primary: 168 100% 11%; /* Cambiado a #003b29 */
+    --primary: 168 100% 11%; /* #003b29 */
     --primary-foreground: 0 0% 100%;
 
     --secondary: 210 40% 96.1%;
@@ -38,12 +38,17 @@
 }
 
 @layer base {
+  html {
+    font-family: 'Poppins', sans-serif;
+  }
+
   * {
     @apply border-border;
   }
 
   body {
     @apply bg-background text-foreground;
+    font-family: 'Poppins', sans-serif;
   }
 }
 

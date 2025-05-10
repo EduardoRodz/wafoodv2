@@ -1,15 +1,17 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useCart } from '../context/CartContext';
-import { ShoppingCart } from 'lucide-react';
+import { ShoppingCart, Pencil, Trash2, Plus, Minus } from 'lucide-react';
 import { formatCurrency } from '../utils/formatCurrency';
+import { Button } from './ui/button';
 
 const Cart: React.FC = () => {
-  const { items, totalAmount, clearCart } = useCart();
+  const { items, totalAmount, clearCart, addToCart, removeFromCart } = useCart();
+  const [editingNote, setEditingNote] = useState<string | null>(null);
   
   if (items.length === 0) {
     return (
-      <div className="bg-white rounded-lg shadow-md p-4 mb-4">
+      <div className="bg-white rounded-lg p-4 mb-4">
         <div className="flex items-center justify-center gap-2 text-gray-500 py-8">
           <ShoppingCart size={24} />
           <p>Tu carrito está vacío</p>
@@ -19,34 +21,73 @@ const Cart: React.FC = () => {
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-4 mb-4">
-      <h3 className="font-bold text-lg mb-4">Resumen del pedido</h3>
-      
-      <div className="space-y-3 mb-4">
+    <div className="bg-white rounded-lg mb-4">
+      <div className="space-y-4">
         {items.map((item) => (
-          <div key={item.id + item.note} className="flex justify-between text-sm">
-            <div>
-              <span className="font-medium">{item.quantity}x {item.name}</span>
-              {item.note && (
-                <p className="text-xs text-gray-500">Nota: {item.note}</p>
-              )}
+          <div key={item.id + item.note} className="py-4">
+            <div className="flex justify-between items-center mb-2">
+              <h3 className="text-base font-medium">{item.name}</h3>
+              <span className="font-medium">{formatCurrency(item.price * item.quantity)}</span>
             </div>
-            <span>{formatCurrency(item.price * item.quantity)}</span>
+            
+            <div className="flex justify-between items-center">
+              <div className="flex items-center border border-gray-300 rounded-md">
+                <button 
+                  onClick={() => removeFromCart(item.id)}
+                  className="px-3 py-1 text-gray-700 hover:bg-gray-100"
+                >
+                  <Minus size={16} />
+                </button>
+                <span className="px-3 py-1">{item.quantity}</span>
+                <button 
+                  onClick={() => addToCart(item)}
+                  className="px-3 py-1 text-gray-700 hover:bg-gray-100"
+                >
+                  <Plus size={16} />
+                </button>
+              </div>
+              
+              <button 
+                onClick={() => removeFromCart(item.id)}
+                className="text-red-500 hover:text-red-700"
+              >
+                <Trash2 size={18} />
+              </button>
+            </div>
+            
+            <div className="mt-2 flex justify-between items-center text-sm text-gray-500">
+              <span>{item.note ? item.note : "Sin notas"}</span>
+              <button 
+                className="flex items-center gap-1 text-gray-700"
+                onClick={() => setEditingNote(item.id)}
+              >
+                <Pencil size={14} /> Editar notas
+              </button>
+            </div>
+            
+            <div className="mt-4 border-b border-gray-200"></div>
           </div>
         ))}
       </div>
       
-      <div className="border-t pt-3 flex justify-between">
-        <span className="font-bold">Total:</span>
-        <span className="font-bold">{formatCurrency(totalAmount)}</span>
+      <div className="py-4 flex justify-between items-center font-medium">
+        <span className="text-lg">Total:</span>
+        <span className="text-lg">{formatCurrency(totalAmount)}</span>
       </div>
       
-      <button
-        onClick={clearCart}
-        className="mt-4 text-sm text-red-500 hover:text-red-700 transition-colors"
+      <Button 
+        className="w-full bg-primary hover:bg-accent text-white font-medium py-6 flex items-center justify-center gap-2 mb-4"
       >
-        Vaciar carrito
-      </button>
+        <ShoppingCart size={20} /> Continuar con el pedido
+      </Button>
+      
+      <Button
+        variant="outline"
+        onClick={clearCart}
+        className="w-full border border-gray-300 hover:bg-gray-50"
+      >
+        Cerrar
+      </Button>
     </div>
   );
 };
