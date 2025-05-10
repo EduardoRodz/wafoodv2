@@ -6,6 +6,7 @@ import { formatCurrency } from '../utils/formatCurrency';
 import { Button } from './ui/button';
 import { useToast } from '../hooks/use-toast';
 import OrderForm from './OrderForm';
+import { SheetClose } from './ui/sheet';
 
 const Cart: React.FC = () => {
   const { items, totalAmount, clearCart, addToCart, removeFromCart, removeItemCompletely } = useCart();
@@ -172,13 +173,14 @@ const Cart: React.FC = () => {
         <ShoppingCart size={20} /> Continuar con el pedido
       </Button>
       
-      <Button
-        variant="outline"
-        onClick={clearCart}
-        className="w-full border border-gray-300 hover:bg-gray-50"
-      >
-        Cerrar
-      </Button>
+      <SheetClose asChild>
+        <Button
+          variant="outline"
+          className="w-full border border-gray-300 hover:bg-gray-50"
+        >
+          Cerrar
+        </Button>
+      </SheetClose>
     </div>
   );
 };
