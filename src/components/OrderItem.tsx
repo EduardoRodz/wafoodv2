@@ -96,7 +96,7 @@ const OrderItem: React.FC<OrderItemProps> = ({ item }) => {
             <textarea
               value={note}
               onChange={(e) => setNote(e.target.value)}
-              placeholder="Ponle picante"
+              placeholder="Ej: Ponle picante"
               className="w-full p-2 border border-gray-300 rounded text-sm"
               rows={2}
             />
