@@ -14,7 +14,7 @@ const CategoryMenu: React.FC = () => {
   };
 
   return (
-    <div className="overflow-x-auto mb-4 sticky top-0 z-10 bg-background pb-2 pt-2">
+    <div className="overflow-x-auto mb-4 bg-background pb-2 pt-2">
       <div className={`flex gap-2 ${isMobile ? 'px-1' : ''}`}>
         {config.categories.map((category) => (
           <button
