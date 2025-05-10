@@ -1,11 +1,13 @@
 
 import React from 'react';
+import { config } from '../../config';
 
 export const SubmitButton: React.FC = () => {
   return (
     <button
       type="submit"
-      className="w-full py-3 bg-primary hover:bg-accent text-white font-bold rounded transition-colors"
+      className="w-full py-3 text-white font-bold rounded transition-colors hover:opacity-90"
+      style={{ backgroundColor: config.theme.cartButtonColor }}
     >
       Enviar pedido por WhatsApp
     </button>
