@@ -5,7 +5,6 @@ import { ShoppingCart } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { Sheet, SheetContent, SheetTrigger, SheetClose, SheetHeader, SheetTitle, SheetDescription } from './ui/sheet';
 import Cart from './Cart';
-import OrderForm from './OrderForm';
 
 const FloatingCartButton = () => {
   const { totalItems } = useCart();
@@ -35,8 +34,6 @@ const FloatingCartButton = () => {
         <div className="p-6 space-y-6">
           <div className="space-y-4">
             <Cart />
-            {/* Temporarily hiding the order form to match the image design */}
-            {/* <OrderForm /> */}
           </div>
         </div>
       </SheetContent>

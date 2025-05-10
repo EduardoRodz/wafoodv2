@@ -1,16 +1,17 @@
+
 import React, { useState } from 'react';
 import { useCart } from '../context/CartContext';
 import { ShoppingCart, Pencil, Trash2, Plus, Minus } from 'lucide-react';
 import { formatCurrency } from '../utils/formatCurrency';
 import { Button } from './ui/button';
-import { useNavigate } from 'react-router-dom';
 import { useToast } from '../hooks/use-toast';
+import OrderForm from './OrderForm';
 
 const Cart: React.FC = () => {
   const { items, totalAmount, clearCart, addToCart, removeFromCart, removeItemCompletely } = useCart();
   const [editingItemId, setEditingItemId] = useState<string | null>(null);
   const [editedNote, setEditedNote] = useState<string>('');
-  const navigate = useNavigate();
+  const [showOrderForm, setShowOrderForm] = useState(false);
   const { toast } = useToast();
   
   if (items.length === 0) {
@@ -58,9 +59,28 @@ const Cart: React.FC = () => {
       description: "Continuando con tu pedido...",
     });
     
-    // Navigate to the order form page
-    navigate('/order');
+    // Show order form
+    setShowOrderForm(true);
   };
+
+  const handleBackToCart = () => {
+    setShowOrderForm(false);
+  };
+
+  if (showOrderForm) {
+    return (
+      <div className="space-y-4">
+        <OrderForm />
+        <Button 
+          variant="outline" 
+          onClick={handleBackToCart}
+          className="w-full border border-gray-300 hover:bg-gray-50"
+        >
+          Volver al carrito
+        </Button>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-white rounded-lg mb-4">
