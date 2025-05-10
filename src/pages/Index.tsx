@@ -6,6 +6,7 @@ import CategoryMenu from '../components/CategoryMenu';
 import CategorySection from '../components/CategorySection';
 import Cart from '../components/Cart';
 import OrderForm from '../components/OrderForm';
+import FloatingCartButton from '../components/FloatingCartButton';
 import { config } from '../config';
 import { CartProvider } from '../context/CartContext';
 
@@ -25,7 +26,7 @@ const Index = () => {
               ))}
             </div>
             
-            <div className="lg:sticky lg:top-24 lg:self-start space-y-4">
+            <div className="lg:sticky lg:top-24 lg:self-start space-y-4" data-cart-section>
               <Cart />
               <OrderForm />
             </div>
@@ -33,6 +34,7 @@ const Index = () => {
         </main>
         
         <Footer />
+        <FloatingCartButton />
       </div>
     </CartProvider>
   );
