@@ -3,11 +3,15 @@ import { useCart } from '../context/CartContext';
 import { ShoppingCart, Pencil, Trash2, Plus, Minus } from 'lucide-react';
 import { formatCurrency } from '../utils/formatCurrency';
 import { Button } from './ui/button';
+import { useNavigate } from 'react-router-dom';
+import { useToast } from '../hooks/use-toast';
 
 const Cart: React.FC = () => {
   const { items, totalAmount, clearCart, addToCart, removeFromCart, removeItemCompletely } = useCart();
   const [editingItemId, setEditingItemId] = useState<string | null>(null);
   const [editedNote, setEditedNote] = useState<string>('');
+  const navigate = useNavigate();
+  const { toast } = useToast();
   
   if (items.length === 0) {
     return (
@@ -43,6 +47,19 @@ const Cart: React.FC = () => {
   const handleCancelEdit = () => {
     setEditingItemId(null);
     setEditedNote('');
+  };
+
+  const handleContinueOrder = () => {
+    console.log('Continuing with order');
+    
+    // Show success toast
+    toast({
+      title: "¡Perfecto!",
+      description: "Continuando con tu pedido...",
+    });
+    
+    // Navigate to the order form page
+    navigate('/order');
   };
 
   return (
@@ -130,11 +147,7 @@ const Cart: React.FC = () => {
       
       <Button 
         className="w-full bg-primary hover:bg-accent text-white font-medium py-6 flex items-center justify-center gap-2 mb-4"
-        onClick={() => {
-          // Handle order continuation logic here
-          console.log('Continuing with order');
-          // You could redirect to checkout or show the next step
-        }}
+        onClick={handleContinueOrder}
       >
         <ShoppingCart size={20} /> Continuar con el pedido
       </Button>
