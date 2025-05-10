@@ -1,13 +1,40 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+
+import React, { useState } from 'react';
+import Header from '../components/Header';
+import Footer from '../components/Footer';
+import CategoryMenu from '../components/CategoryMenu';
+import CategorySection from '../components/CategorySection';
+import Cart from '../components/Cart';
+import OrderForm from '../components/OrderForm';
+import { config } from '../config';
+import { CartProvider } from '../context/CartContext';
 
 const Index = () => {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-gray-600">Start building your amazing project here!</p>
+    <CartProvider>
+      <div className="flex flex-col min-h-screen">
+        <Header />
+        
+        <main className="flex-grow container mx-auto px-4 py-6">
+          <CategoryMenu />
+          
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="lg:col-span-2">
+              {config.categories.map((category) => (
+                <CategorySection key={category.id} category={category} />
+              ))}
+            </div>
+            
+            <div className="lg:sticky lg:top-24 lg:self-start space-y-4">
+              <Cart />
+              <OrderForm />
+            </div>
+          </div>
+        </main>
+        
+        <Footer />
       </div>
-    </div>
+    </CartProvider>
   );
 };
 
