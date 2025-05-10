@@ -14,10 +14,10 @@ const Index = () => {
       <div className="flex flex-col min-h-screen">
         <Header />
         
-        <main className="flex-grow container mx-auto px-4 py-6">
+        <main className="flex-grow mx-auto w-full px-2 sm:px-4 py-2 sm:py-6">
           <CategoryMenu />
           
-          <div className="grid grid-cols-1 lg:grid-cols-1 gap-6">
+          <div className="grid grid-cols-1 gap-4">
             <div>
               {config.categories.map((category) => (
                 <CategorySection key={category.id} category={category} />

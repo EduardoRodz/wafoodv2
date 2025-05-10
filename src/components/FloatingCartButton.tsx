@@ -5,15 +5,17 @@ import { ShoppingCart } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { Sheet, SheetContent, SheetTrigger, SheetClose, SheetHeader, SheetTitle, SheetDescription } from './ui/sheet';
 import Cart from './Cart';
+import { useIsMobile } from '../hooks/use-mobile';
 
 const FloatingCartButton = () => {
   const { totalItems } = useCart();
+  const isMobile = useIsMobile();
   
   return (
     <Sheet>
       <SheetTrigger asChild>
         <Button
-          className="fixed bottom-6 right-6 rounded-full w-14 h-14 shadow-lg flex items-center justify-center p-0 animate-fade-in z-50"
+          className="fixed bottom-4 right-4 rounded-full w-14 h-14 shadow-lg flex items-center justify-center p-0 animate-fade-in z-50"
           variant="default"
           aria-label="Ver carrito"
         >
@@ -25,13 +27,13 @@ const FloatingCartButton = () => {
           )}
         </Button>
       </SheetTrigger>
-      <SheetContent className="w-full sm:w-[400px] p-0 overflow-y-auto font-sans" side="right">
-        <SheetHeader className="p-6 pb-2 text-left">
+      <SheetContent className={`${isMobile ? 'w-full' : 'w-[400px]'} p-0 overflow-y-auto font-sans`} side="right">
+        <SheetHeader className="p-4 pb-2 text-left">
           <SheetTitle className="text-xl font-semibold">Tu Pedido</SheetTitle>
-          <SheetDescription className="text-base text-gray-600">Revisa tu pedido antes de enviarlo</SheetDescription>
+          <SheetDescription className="text-sm text-gray-600">Revisa tu pedido antes de enviarlo</SheetDescription>
         </SheetHeader>
         
-        <div className="p-6 space-y-6">
+        <div className="p-4 space-y-4">
           <div className="space-y-4">
             <Cart />
           </div>
