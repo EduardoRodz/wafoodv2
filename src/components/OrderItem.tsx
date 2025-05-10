@@ -5,6 +5,7 @@ import { useCart } from '../context/CartContext';
 import { Plus, Minus } from 'lucide-react';
 import { Button } from './ui/button';
 import { formatCurrency } from '../utils/formatCurrency';
+import { config } from '../config';
 
 interface OrderItemProps {
   item: MenuItem;
@@ -103,7 +104,10 @@ const OrderItem: React.FC<OrderItemProps> = ({ item }) => {
           
           <Button 
             onClick={handleAddToCart} 
-            className={`w-full ${tempQuantity > 0 ? 'bg-[#003b29]' : 'bg-black'} hover:bg-primary text-white flex items-center justify-center gap-2`}
+            className="w-full text-white flex items-center justify-center gap-2"
+            style={{ 
+              backgroundColor: tempQuantity > 0 ? config.theme.cartButtonColor : 'black',
+            }}
             disabled={tempQuantity === 0}
           >
             <Plus size={16} /> Agregar al pedido

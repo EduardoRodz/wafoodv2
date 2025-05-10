@@ -6,6 +6,7 @@ import { useCart } from '../context/CartContext';
 import { Sheet, SheetContent, SheetTrigger, SheetClose, SheetHeader, SheetTitle, SheetDescription } from './ui/sheet';
 import Cart from './Cart';
 import { useIsMobile } from '../hooks/use-mobile';
+import { config } from '../config';
 
 const FloatingCartButton = () => {
   const { totalItems } = useCart();
@@ -18,6 +19,7 @@ const FloatingCartButton = () => {
           className="fixed bottom-4 right-4 rounded-full w-14 h-14 shadow-lg flex items-center justify-center p-0 animate-fade-in z-50"
           variant="default"
           aria-label="Ver carrito"
+          style={{ backgroundColor: config.theme.floatingCartButtonColor }}
         >
           <ShoppingCart className="h-6 w-6" />
           {totalItems > 0 && (

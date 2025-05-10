@@ -1,3 +1,4 @@
+
 // config.ts - Configuration file that can be easily edited
 
 export interface MenuItem {
@@ -29,6 +30,7 @@ export const config = {
     textColor: "#333333",
     backgroundColor: "#f5f5f5",
     cartButtonColor: "#003b29", // Added cart button color configuration
+    floatingCartButtonColor: "#003b29", // Added floating cart button color
   },
 
   // Bill denominations for cash payment
