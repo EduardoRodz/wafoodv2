@@ -6,8 +6,9 @@ import { formatCurrency } from '../utils/formatCurrency';
 import { Button } from './ui/button';
 
 const Cart: React.FC = () => {
-  const { items, totalAmount, clearCart, addToCart, removeFromCart } = useCart();
-  const [editingNote, setEditingNote] = useState<string | null>(null);
+  const { items, totalAmount, clearCart, addToCart, removeFromCart, removeItemCompletely } = useCart();
+  const [editingItemId, setEditingItemId] = useState<string | null>(null);
+  const [editedNote, setEditedNote] = useState<string>('');
   
   if (items.length === 0) {
     return (
@@ -19,6 +20,29 @@ const Cart: React.FC = () => {
       </div>
     );
   }
+
+  const handleEditNote = (itemId: string, currentNote: string = '') => {
+    setEditingItemId(itemId);
+    setEditedNote(currentNote);
+  };
+
+  const handleSaveNote = (itemId: string) => {
+    // Find the item and update its note
+    const item = items.find(i => i.id === itemId);
+    if (item) {
+      // Remove old item
+      removeItemCompletely(itemId);
+      // Add updated item with new note
+      addToCart({...item, note: editedNote});
+    }
+    setEditingItemId(null);
+    setEditedNote('');
+  };
+
+  const handleCancelEdit = () => {
+    setEditingItemId(null);
+    setEditedNote('');
+  };
 
   return (
     <div className="bg-white rounded-lg mb-4">
@@ -48,7 +72,7 @@ const Cart: React.FC = () => {
               </div>
               
               <button 
-                onClick={() => removeFromCart(item.id)}
+                onClick={() => removeItemCompletely(item.id)}
                 className="text-red-500 hover:text-red-700"
               >
                 <Trash2 size={18} />
@@ -56,13 +80,41 @@ const Cart: React.FC = () => {
             </div>
             
             <div className="mt-2 flex justify-between items-center text-sm text-gray-500">
-              <span>{item.note ? item.note : "Sin notas"}</span>
-              <button 
-                className="flex items-center gap-1 text-gray-700"
-                onClick={() => setEditingNote(item.id)}
-              >
-                <Pencil size={14} /> Editar notas
-              </button>
+              {editingItemId === item.id ? (
+                <div className="w-full">
+                  <textarea
+                    value={editedNote}
+                    onChange={(e) => setEditedNote(e.target.value)}
+                    className="w-full p-2 border border-gray-300 rounded text-sm mb-2"
+                    placeholder="Agregar notas"
+                    rows={2}
+                  />
+                  <div className="flex justify-end gap-2">
+                    <button 
+                      className="text-gray-500 text-sm"
+                      onClick={handleCancelEdit}
+                    >
+                      Cancelar
+                    </button>
+                    <button 
+                      className="text-primary text-sm font-medium"
+                      onClick={() => handleSaveNote(item.id)}
+                    >
+                      Guardar
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <>
+                  <span>{item.note ? item.note : "Sin notas"}</span>
+                  <button 
+                    className="flex items-center gap-1 text-gray-700"
+                    onClick={() => handleEditNote(item.id, item.note)}
+                  >
+                    <Pencil size={14} /> Editar notas
+                  </button>
+                </>
+              )}
             </div>
             
             <div className="mt-4 border-b border-gray-200"></div>
