@@ -24,7 +24,7 @@ export const useOrderForm = () => {
   const validateForm = () => {
     const errors = {
       name: !name.trim(),
-      phone: orderType === 'delivery' && !phone.trim(),
+      phone: orderType === 'delivery' && (!phone.trim() || phone.length !== 10),
       address: orderType === 'delivery' && !address.trim()
     };
     

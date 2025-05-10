@@ -12,7 +12,7 @@ export const AdditionalComments: React.FC<AdditionalCommentsProps> = ({
 }) => {
   return (
     <div>
-      <label className="block mb-1 text-sm font-medium">Comentarios adicionales</label>
+      <label className="block mb-1 text-sm font-medium">Comentarios adicionales <span className="text-gray-400">(opcional)</span></label>
       <textarea
         value={comments}
         onChange={(e) => setComments(e.target.value)}
