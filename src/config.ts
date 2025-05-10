@@ -50,7 +50,7 @@ export const config = {
       items: [
         {
           id: "cappuccino",
-          name: "Cappuccino",
+          name: "Cappuccinoxxx",
           description: "Rico espresso con espumosa leche",
           price: 120,
           image: "https://mojo.generalmills.com/api/public/content/KadqkpTtNk-KOzGZTNo0bg_gmi_hi_res_jpeg.jpeg?v=2c3d8e08&t=16e3ce250f244648bef28c5949fb99ff",
