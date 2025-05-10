@@ -73,7 +73,7 @@
 }
 
 .add-button {
-  @apply bg-primary hover:bg-accent text-white font-bold py-2 w-full rounded flex items-center justify-center gap-2 mt-2 transition-all;
+  @apply bg-black hover:bg-primary text-white font-bold py-2 w-full rounded flex items-center justify-center gap-2 mt-2 transition-all;
 }
 
 /* Mobile optimizations */

@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { MenuItem } from '../config';
 import { useCart } from '../context/CartContext';
@@ -103,7 +102,7 @@ const OrderItem: React.FC<OrderItemProps> = ({ item }) => {
           
           <Button 
             onClick={handleAddToCart} 
-            className="w-full bg-primary hover:bg-accent text-white flex items-center justify-center gap-2"
+            className="w-full bg-black hover:bg-primary text-white flex items-center justify-center gap-2"
             disabled={tempQuantity === 0}
           >
             <Plus size={16} /> Agregar al pedido
