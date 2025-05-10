@@ -13,11 +13,17 @@ interface OrderItemProps {
 const OrderItem: React.FC<OrderItemProps> = ({ item }) => {
   const { addToCart, removeFromCart, getItemQuantity } = useCart();
   const [note, setNote] = useState('');
+  const [tempQuantity, setTempQuantity] = useState(0);
   const quantity = getItemQuantity(item.id);
   const [showNote, setShowNote] = useState(false);
 
   const handleAddToCart = () => {
-    addToCart({ ...item, note });
+    // Agregar al carrito con la cantidad tempQuantity
+    for (let i = 0; i < tempQuantity; i++) {
+      addToCart({ ...item, note });
+    }
+    // Resetear la cantidad temporal después de agregar al carrito
+    setTempQuantity(0);
   };
 
   const handleRemoveFromCart = () => {
@@ -26,6 +32,14 @@ const OrderItem: React.FC<OrderItemProps> = ({ item }) => {
       setNote('');
       setShowNote(false);
     }
+  };
+
+  const increaseTemp = () => {
+    setTempQuantity(prev => prev + 1);
+  };
+
+  const decreaseTemp = () => {
+    setTempQuantity(prev => prev > 0 ? prev - 1 : 0);
   };
 
   return (
@@ -52,17 +66,16 @@ const OrderItem: React.FC<OrderItemProps> = ({ item }) => {
           
           <div className="flex items-center gap-3">
             <button 
-              onClick={handleRemoveFromCart}
+              onClick={decreaseTemp}
               className="rounded-full w-8 h-8 flex items-center justify-center border border-gray-300 bg-white text-gray-700 hover:bg-gray-100"
-              disabled={quantity === 0}
             >
               <Minus size={16} />
             </button>
             
-            <span className="font-medium text-lg w-4 text-center">{quantity}</span>
+            <span className="font-medium text-lg w-4 text-center">{tempQuantity}</span>
             
             <button 
-              onClick={() => addToCart({ ...item, note })}
+              onClick={increaseTemp}
               className="rounded-full w-8 h-8 flex items-center justify-center border border-gray-300 bg-white text-gray-700 hover:bg-gray-100"
             >
               <Plus size={16} />
@@ -70,59 +83,32 @@ const OrderItem: React.FC<OrderItemProps> = ({ item }) => {
           </div>
         </div>
         
-        {quantity > 0 ? (
-          <div className="space-y-2">
-            <button 
-              onClick={() => setShowNote(!showNote)}
-              className="text-sm text-gray-500 hover:text-primary font-medium mx-auto block"
-            >
-              {showNote ? 'Ocultar notas' : note ? 'Editar notas' : 'Agregar notas'}
-            </button>
-            
-            {showNote && (
-              <textarea
-                value={note}
-                onChange={(e) => setNote(e.target.value)}
-                placeholder="Ponle picante"
-                className="w-full p-2 border border-gray-300 rounded text-sm"
-                rows={2}
-              />
-            )}
-            
-            <Button 
-              onClick={handleAddToCart} 
-              className="w-full bg-primary hover:bg-accent text-white flex items-center justify-center gap-2"
-            >
-              <Plus size={16} /> Agregar al pedido
-            </Button>
-          </div>
-        ) : (
-          <div className="space-y-2">
-            <button 
-              onClick={() => setShowNote(!showNote)}
-              className="text-sm text-gray-500 hover:text-primary font-medium mx-auto block"
-            >
-              Agregar notas
-            </button>
-            
-            {showNote && (
-              <textarea
-                value={note}
-                onChange={(e) => setNote(e.target.value)}
-                placeholder="Ponle picante"
-                className="w-full p-2 border border-gray-300 rounded text-sm"
-                rows={2}
-              />
-            )}
-            
-            <Button 
-              onClick={handleAddToCart} 
-              className="w-full bg-primary hover:bg-accent text-white flex items-center justify-center gap-2"
-            >
-              <Plus size={16} /> Agregar al pedido
-            </Button>
-          </div>
-        )}
+        <div className="space-y-2">
+          <button 
+            onClick={() => setShowNote(!showNote)}
+            className="text-sm text-gray-500 hover:text-primary font-medium mx-auto block"
+          >
+            {showNote ? 'Ocultar notas' : note ? 'Editar notas' : 'Agregar notas'}
+          </button>
+          
+          {showNote && (
+            <textarea
+              value={note}
+              onChange={(e) => setNote(e.target.value)}
+              placeholder="Ponle picante"
+              className="w-full p-2 border border-gray-300 rounded text-sm"
+              rows={2}
+            />
+          )}
+          
+          <Button 
+            onClick={handleAddToCart} 
+            className="w-full bg-primary hover:bg-accent text-white flex items-center justify-center gap-2"
+            disabled={tempQuantity === 0}
+          >
+            <Plus size={16} /> Agregar al pedido
+          </Button>
+        </div>
       </div>
     </div>
   );
