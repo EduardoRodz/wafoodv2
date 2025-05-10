@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { MenuItem } from '../config';
 
@@ -13,6 +12,7 @@ interface CartContextProps {
   totalItems: number;
   addToCart: (item: MenuItem & { note?: string }) => void;
   removeFromCart: (itemId: string) => void;
+  removeItemCompletely: (itemId: string) => void;
   clearCart: () => void;
   getItemQuantity: (itemId: string) => number;
 }
@@ -23,6 +23,7 @@ const CartContext = createContext<CartContextProps>({
   totalItems: 0,
   addToCart: () => {},
   removeFromCart: () => {},
+  removeItemCompletely: () => {},
   clearCart: () => {},
   getItemQuantity: () => 0,
 });
@@ -75,6 +76,10 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
     });
   };
 
+  const removeItemCompletely = (itemId: string) => {
+    setItems((prevItems) => prevItems.filter((item) => item.id !== itemId));
+  };
+
   const clearCart = () => {
     setItems([]);
   };
@@ -96,6 +101,7 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
         totalItems,
         addToCart,
         removeFromCart,
+        removeItemCompletely,
         clearCart,
         getItemQuantity,
       }}
