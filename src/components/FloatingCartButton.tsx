@@ -3,7 +3,7 @@ import React from 'react';
 import { Button } from './ui/button';
 import { ShoppingCart } from 'lucide-react';
 import { useCart } from '../context/CartContext';
-import { Sheet, SheetContent, SheetTrigger } from './ui/sheet';
+import { Sheet, SheetContent, SheetTrigger, SheetClose } from './ui/sheet';
 import Cart from './Cart';
 import OrderForm from './OrderForm';
 
@@ -37,9 +37,11 @@ const FloatingCartButton = () => {
           </div>
           
           <div className="pt-4 flex justify-end">
-            <Button variant="outline" className="mr-2" onClick={() => document.querySelector('button[data-state="open"]')?.click()}>
-              Cerrar
-            </Button>
+            <SheetClose asChild>
+              <Button variant="outline" className="mr-2">
+                Cerrar
+              </Button>
+            </SheetClose>
           </div>
         </div>
       </SheetContent>
