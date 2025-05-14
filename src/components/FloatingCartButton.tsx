@@ -5,12 +5,13 @@ import { useCart } from '../context/CartContext';
 import { Drawer, DrawerContent, DrawerTrigger, DrawerClose } from './ui/drawer';
 import Cart from './Cart';
 import { useIsMobile } from '../hooks/use-mobile';
-import { config } from '../config';
+import { useConfig } from '../context/ConfigContext';
 
 const FloatingCartButton = () => {
+  const { config } = useConfig();
   const { totalItems } = useCart();
   const isMobile = useIsMobile();
-  
+
   return (
     <Drawer>
       <DrawerTrigger asChild>

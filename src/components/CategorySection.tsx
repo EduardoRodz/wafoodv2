@@ -1,6 +1,6 @@
 import React from 'react';
-import OrderItem from './OrderItem';
 import { Category } from '../config';
+import OrderItem from './OrderItem';
 
 interface CategorySectionProps {
   category: Category;
@@ -8,12 +8,17 @@ interface CategorySectionProps {
 
 const CategorySection: React.FC<CategorySectionProps> = ({ category }) => {
   return (
-    <section id={category.id}>
-      <div className="category-title">
-        <span>{category.icon}</span>
-        <h2>{category.name}</h2>
-      </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 px-1 sm:gap-6 sm:px-2">
+    <section 
+      id={category.id} 
+      className="py-4 scroll-mt-32"
+      data-category-id={category.id}
+    >
+      <h2 className="text-xl font-bold mb-4 flex items-center">
+        <span className="text-2xl mr-2">{category.icon}</span>
+        {category.name}
+      </h2>
+      
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {category.items.map((item) => (
           <OrderItem key={item.id} item={item} />
         ))}

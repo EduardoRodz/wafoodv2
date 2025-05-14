@@ -4,10 +4,16 @@ import Footer from '../components/Footer';
 import CategoryMenu from '../components/CategoryMenu';
 import CategorySection from '../components/CategorySection';
 import FloatingCartButton from '../components/FloatingCartButton';
-import { config } from '../config';
+import { useConfig } from '../context/ConfigContext';
 import { CartProvider } from '../context/CartContext';
 
 const Index = () => {
+  const { config, isLoading } = useConfig();
+
+  if (isLoading) {
+    return <div className="flex items-center justify-center min-h-screen">Cargando...</div>;
+  }
+
   return (
     <CartProvider>
       <div className="flex flex-col min-h-screen">

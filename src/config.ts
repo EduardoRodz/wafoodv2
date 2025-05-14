@@ -1,4 +1,3 @@
-
 // config.ts - Configuration file that can be easily edited
 
 export interface MenuItem {
@@ -16,7 +15,8 @@ export interface Category {
   items: MenuItem[];
 }
 
-export const config = {
+// Configuración predeterminada
+export const defaultConfig = {
   // Restaurant information
   restaurantName: "WHATSFOOD",
   whatsappNumber: "18092010357", // Format: country code + number, no spaces or symbols
@@ -166,4 +166,38 @@ export const config = {
 
   // Footer information
   footerText: "© 2023 WHATSFOOD. Frescamente Cocinado para ti.",
+};
+
+// Intentar cargar la configuración desde localStorage o usar la predeterminada
+const loadConfig = () => {
+  try {
+    const savedConfig = localStorage.getItem('siteConfig');
+    if (savedConfig) {
+      return JSON.parse(savedConfig);
+    }
+  } catch (error) {
+    console.error('Error cargando configuración guardada:', error);
+  }
+  return defaultConfig;
+};
+
+// Exportar la configuración activa
+export const config = loadConfig();
+
+// Función para guardar configuración
+export const saveConfig = (newConfig: typeof defaultConfig) => {
+  try {
+    localStorage.setItem('siteConfig', JSON.stringify(newConfig));
+    // Ya no necesitamos recargar la página ya que usamos el contexto y eventos
+    // window.location.reload();
+    
+    // Disparar un evento para informar a otros componentes
+    const event = new CustomEvent('configSaved', { detail: newConfig });
+    window.dispatchEvent(event);
+    
+    return true;
+  } catch (error) {
+    console.error('Error guardando configuración:', error);
+    return false;
+  }
 };
