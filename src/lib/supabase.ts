@@ -21,13 +21,40 @@ const ANON_KEY = import.meta.env?.VITE_SUPABASE_ANON_KEY ||
 const SERVICE_KEY = import.meta.env?.VITE_SUPABASE_SERVICE_KEY || 
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im51bWpwaGx0dXlmYnB5cm5ldmx1Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc0NzIyOTMwNSwiZXhwIjoyMDYyODA1MzA1fQ.LXilXr4H0Hzs3KeEqJPZlS4iJKrr4_GUP7FmPUJvp7c';
 
+// Función para decodificar base64url de manera segura en navegador
+const base64UrlDecode = (str: string): string => {
+  try {
+    // Convertir base64url a base64 estándar
+    const base64 = str.replace(/-/g, '+').replace(/_/g, '/');
+    
+    // Añadir padding si es necesario
+    const padding = '='.repeat((4 - base64.length % 4) % 4);
+    const base64Padded = base64 + padding;
+    
+    // Decodificar usando atob en navegador
+    const raw = atob(base64Padded);
+    
+    // Convertir la cadena de bytes a string UTF-8
+    const output = decodeURIComponent(
+      Array.from(raw).map(char => '%' + ('00' + char.charCodeAt(0).toString(16)).slice(-2)).join('')
+    );
+    
+    return output;
+  } catch (e) {
+    console.error('Error decodificando base64url:', e);
+    // En caso de error, devolvemos un JSON vacío que igual podemos parsear
+    return '{}';
+  }
+};
+
 // Función para validar que una clave tenga el formato JWT correcto
 const validateKey = (key: string, role: string): boolean => {
   try {
     const parts = key.split('.');
     if (parts.length !== 3) return false;
     
-    const payload = JSON.parse(atob(parts[1]));
+    // Intentar extraer el payload
+    const payload = JSON.parse(base64UrlDecode(parts[1]));
     return payload.role === role;
   } catch (e) {
     console.error('Error validando clave API:', e);

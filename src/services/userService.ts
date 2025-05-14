@@ -205,11 +205,22 @@ export const deleteUser = async (userId: string): Promise<{ success: boolean; er
 // Obtener el rol del usuario actual
 export const getCurrentUserRole = async (): Promise<string> => {
   try {
+    // Intentar obtener el usuario autenticado
+    console.log("Obteniendo usuario actual...");
     const { data: { user }, error: authError } = await supabase.auth.getUser();
     
-    if (authError || !user) {
-      throw authError || new Error('No se encontró usuario autenticado');
+    // Si hay error o no hay usuario, manejarlo adecuadamente
+    if (authError) {
+      console.error('Error al obtener usuario:', authError);
+      throw authError;
     }
+    
+    if (!user) {
+      console.error('No se encontró usuario autenticado');
+      throw new Error('No se encontró usuario autenticado');
+    }
+    
+    console.log("Usuario autenticado:", user.email);
     
     // Si el usuario es eduardorweb@gmail.com, siempre retornar 'admin'
     if (user.email === 'eduardorweb@gmail.com') {
@@ -217,20 +228,31 @@ export const getCurrentUserRole = async (): Promise<string> => {
       return 'admin';
     }
     
-    const { data: roleData, error: roleError } = await supabase
-      .from('user_roles')
-      .select('role')
-      .eq('user_id', user.id)
-      .single();
-    
-    if (roleError) {
-      console.error('Error al obtener rol:', roleError);
-      return 'staff'; // Por defecto, asumimos rol de staff
+    // Consultar el rol del usuario en la base de datos
+    console.log("Consultando rol en tabla user_roles para:", user.id);
+    try {
+      const { data: roleData, error: roleError } = await supabase
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', user.id)
+        .single();
+      
+      if (roleError) {
+        console.error('Error al obtener rol:', roleError);
+        // No lanzamos error para evitar que la app se rompa, usamos rol por defecto
+        return 'staff';
+      }
+      
+      const role = roleData?.role || 'staff';
+      console.log("Rol obtenido:", role);
+      return role;
+    } catch (roleQueryError) {
+      console.error('Error en consulta de rol:', roleQueryError);
+      return 'staff';
     }
-    
-    return roleData?.role || 'staff';
   } catch (error) {
     console.error('Error al obtener rol del usuario actual:', error);
-    return 'staff'; // Por defecto, asumimos rol de staff
+    // Por defecto, asumimos rol de staff para no romper la aplicación
+    return 'staff';
   }
 }; 

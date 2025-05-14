@@ -51,6 +51,28 @@ const AdminPanel: React.FC = () => {
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [userRole, setUserRole] = useState<string>('staff');
   const [roleLoading, setRoleLoading] = useState(true);
+  const [loadingTimeout, setLoadingTimeout] = useState(false);
+
+  // Timeout para pantalla de carga
+  useEffect(() => {
+    let timeoutId: NodeJS.Timeout;
+    
+    if (loading || roleLoading) {
+      timeoutId = setTimeout(() => {
+        setLoadingTimeout(true);
+      }, 10000); // 10 segundos de espera máxima
+    }
+    
+    return () => {
+      if (timeoutId) clearTimeout(timeoutId);
+    };
+  }, [loading, roleLoading]);
+
+  // Reintentar carga
+  const handleRetry = () => {
+    setLoadingTimeout(false);
+    window.location.reload();
+  };
 
   // Cargar el rol del usuario actual
   useEffect(() => {
@@ -58,7 +80,15 @@ const AdminPanel: React.FC = () => {
       if (user) {
         try {
           setRoleLoading(true);
+          // Establecer un timeout de seguridad para evitar carga infinita
+          const timeoutId = setTimeout(() => {
+            console.log("Timeout al cargar rol - estableciendo rol por defecto");
+            setRoleLoading(false);
+            setUserRole('staff'); // Establecer rol por defecto si hay timeout
+          }, 5000); // 5 segundos máximo
+
           const role = await getCurrentUserRole();
+          clearTimeout(timeoutId); // Limpiar el timeout si la petición termina bien
           setUserRole(role);
           
           // Si es staff, establecer el tab activo a "menu"
@@ -67,14 +97,18 @@ const AdminPanel: React.FC = () => {
           }
         } catch (error) {
           console.error('Error al cargar el rol del usuario:', error);
+          // En caso de error, asignar un rol predeterminado
+          setUserRole('staff');
         } finally {
           setRoleLoading(false);
         }
+      } else {
+        setRoleLoading(false);
       }
     };
     
     loadUserRole();
-  }, [user]);
+  }, [user, activeTab]);
 
   // Actualizar la copia editable cuando cambia la configuración
   useEffect(() => {
@@ -162,6 +196,20 @@ const AdminPanel: React.FC = () => {
           <div className="w-12 h-12 border-4 border-t-primary rounded-full animate-spin mx-auto mb-4" 
                style={{ borderTopColor: config.theme.primaryColor }}></div>
           <p className="text-gray-600">Cargando...</p>
+          
+          {loadingTimeout && (
+            <div className="mt-6 p-4 bg-red-50 rounded-lg max-w-md">
+              <p className="text-red-600 mb-2">
+                La carga está tomando más tiempo del esperado. Puede haber un problema con la conexión o la autenticación.
+              </p>
+              <button 
+                onClick={handleRetry}
+                className="mt-2 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+              >
+                Reintentar
+              </button>
+            </div>
+          )}
         </div>
       </div>
     );
