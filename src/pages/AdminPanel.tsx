@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { config as defaultConfig } from '../config';
-import { ColorPicker, CategoryEditor, MenuItemEditor, GeneralSettings } from '../components/admin';
-import { X, Save, LogOut } from 'lucide-react';
+import { ColorPicker, CategoryEditor, MenuItemEditor, GeneralSettings, UserManager } from '../components/admin';
+import { X, Save, LogOut, Users } from 'lucide-react';
 import { useConfig } from '../context/ConfigContext';
 import { useAuth } from '../context/AuthContext';
+import { getCurrentUserRole } from '../services/userService';
 
 // Tipo para nuestro archivo de configuración editable
 interface EditableConfig {
@@ -45,9 +46,35 @@ const AdminPanel: React.FC = () => {
   const [password, setPassword] = useState('');
   const [loginError, setLoginError] = useState('');
   const [editableConfig, setEditableConfig] = useState<EditableConfig>(JSON.parse(JSON.stringify(config)));
-  const [activeTab, setActiveTab] = useState('general');
+  const [activeTab, setActiveTab] = useState('menu');
   const [hasChanges, setHasChanges] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
+  const [userRole, setUserRole] = useState<string>('staff');
+  const [roleLoading, setRoleLoading] = useState(true);
+
+  // Cargar el rol del usuario actual
+  useEffect(() => {
+    const loadUserRole = async () => {
+      if (user) {
+        try {
+          setRoleLoading(true);
+          const role = await getCurrentUserRole();
+          setUserRole(role);
+          
+          // Si es staff, establecer el tab activo a "menu"
+          if (role === 'staff' && activeTab !== 'menu' && activeTab !== 'categories') {
+            setActiveTab('menu');
+          }
+        } catch (error) {
+          console.error('Error al cargar el rol del usuario:', error);
+        } finally {
+          setRoleLoading(false);
+        }
+      }
+    };
+    
+    loadUserRole();
+  }, [user]);
 
   // Actualizar la copia editable cuando cambia la configuración
   useEffect(() => {
@@ -128,7 +155,7 @@ const AdminPanel: React.FC = () => {
   };
 
   // Si está cargando, mostrar indicador
-  if (loading) {
+  if (loading || roleLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen" style={{ backgroundColor: config.theme.backgroundColor }}>
         <div className="text-center">
@@ -221,7 +248,18 @@ const AdminPanel: React.FC = () => {
           )}
           
           <div className="flex items-center gap-2">
-            <span className="text-sm text-gray-600">{user.email}</span>
+            <span className="text-sm text-gray-600">
+              {user.email}
+              {userRole === 'admin' ? (
+                <span className="ml-1 px-2 py-0.5 text-xs bg-purple-100 text-purple-800 rounded-full">
+                  Admin
+                </span>
+              ) : (
+                <span className="ml-1 px-2 py-0.5 text-xs bg-blue-100 text-blue-800 rounded-full">
+                  Personal
+                </span>
+              )}
+            </span>
             <button
               onClick={handleLogout}
               className="flex items-center gap-1 py-2 px-4 bg-gray-200 text-gray-800 font-medium rounded hover:bg-gray-300"
@@ -248,29 +286,60 @@ const AdminPanel: React.FC = () => {
           {/* Tabs de navegación */}
           <div className="border-b border-gray-200 mb-6">
             <nav className="flex space-x-8">
+              {/* Tabs solo para administradores */}
+              {userRole === 'admin' && (
+                <>
+                  <button
+                    onClick={() => setActiveTab('general')}
+                    className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                      activeTab === 'general'
+                        ? 'border-primary text-primary'
+                        : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                    }`}
+                    style={{ borderColor: activeTab === 'general' ? config.theme.primaryColor : 'transparent',
+                           color: activeTab === 'general' ? config.theme.primaryColor : '' }}
+                  >
+                    Configuración General
+                  </button>
+                  <button
+                    onClick={() => setActiveTab('appearance')}
+                    className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                      activeTab === 'appearance'
+                        ? 'border-primary text-primary'
+                        : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                    }`}
+                    style={{ borderColor: activeTab === 'appearance' ? config.theme.primaryColor : 'transparent',
+                           color: activeTab === 'appearance' ? config.theme.primaryColor : '' }}
+                  >
+                    Apariencia
+                  </button>
+                  <button
+                    onClick={() => setActiveTab('users')}
+                    className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                      activeTab === 'users'
+                        ? 'border-primary text-primary'
+                        : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                    }`}
+                    style={{ borderColor: activeTab === 'users' ? config.theme.primaryColor : 'transparent',
+                           color: activeTab === 'users' ? config.theme.primaryColor : '' }}
+                  >
+                    Usuarios
+                  </button>
+                </>
+              )}
+              
+              {/* Tabs para todos los usuarios (en orden inverso para staff) */}
               <button
-                onClick={() => setActiveTab('general')}
+                onClick={() => setActiveTab('menu')}
                 className={`py-2 px-1 border-b-2 font-medium text-sm ${
-                  activeTab === 'general'
+                  activeTab === 'menu'
                     ? 'border-primary text-primary'
                     : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                 }`}
-                style={{ borderColor: activeTab === 'general' ? config.theme.primaryColor : 'transparent',
-                         color: activeTab === 'general' ? config.theme.primaryColor : '' }}
+                style={{ borderColor: activeTab === 'menu' ? config.theme.primaryColor : 'transparent',
+                       color: activeTab === 'menu' ? config.theme.primaryColor : '' }}
               >
-                Configuración General
-              </button>
-              <button
-                onClick={() => setActiveTab('appearance')}
-                className={`py-2 px-1 border-b-2 font-medium text-sm ${
-                  activeTab === 'appearance'
-                    ? 'border-primary text-primary'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                }`}
-                style={{ borderColor: activeTab === 'appearance' ? config.theme.primaryColor : 'transparent',
-                         color: activeTab === 'appearance' ? config.theme.primaryColor : '' }}
-              >
-                Apariencia
+                Menú
               </button>
               <button
                 onClick={() => setActiveTab('categories')}
@@ -280,28 +349,16 @@ const AdminPanel: React.FC = () => {
                     : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                 }`}
                 style={{ borderColor: activeTab === 'categories' ? config.theme.primaryColor : 'transparent',
-                         color: activeTab === 'categories' ? config.theme.primaryColor : '' }}
+                       color: activeTab === 'categories' ? config.theme.primaryColor : '' }}
               >
                 Categorías
-              </button>
-              <button
-                onClick={() => setActiveTab('menu')}
-                className={`py-2 px-1 border-b-2 font-medium text-sm ${
-                  activeTab === 'menu'
-                    ? 'border-primary text-primary'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                }`}
-                style={{ borderColor: activeTab === 'menu' ? config.theme.primaryColor : 'transparent',
-                         color: activeTab === 'menu' ? config.theme.primaryColor : '' }}
-              >
-                Menú
               </button>
             </nav>
           </div>
 
           {/* Contenido de los tabs */}
           <div className="bg-white rounded-lg shadow p-6">
-            {activeTab === 'general' && (
+            {activeTab === 'general' && userRole === 'admin' && (
               <GeneralSettings 
                 config={editableConfig} 
                 onChange={(newGeneralSettings) => {
@@ -311,7 +368,7 @@ const AdminPanel: React.FC = () => {
               />
             )}
 
-            {activeTab === 'appearance' && (
+            {activeTab === 'appearance' && userRole === 'admin' && (
               <div className="space-y-6">
                 <h2 className="text-lg font-semibold">Colores del Sitio</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -384,6 +441,13 @@ const AdminPanel: React.FC = () => {
               <MenuItemEditor 
                 categories={editableConfig.categories}
                 onChange={(categories) => updateConfigSection('categories', categories)}
+              />
+            )}
+            
+            {activeTab === 'users' && userRole === 'admin' && (
+              <UserManager
+                currentUserEmail={user.email}
+                themeColor={config.theme.primaryColor}
               />
             )}
           </div>
