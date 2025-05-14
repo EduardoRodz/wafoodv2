@@ -82,6 +82,19 @@ Este proyecto utiliza Supabase para la autenticación del panel de administraci�
 - El contexto de autenticación se encuentra en `src/context/AuthContext.tsx`
 - Los servicios de autenticación están en `src/services/authService.ts`
 
+### Seguridad de Claves API
+
+Para proteger las claves API de Supabase, hemos implementado varias medidas de seguridad:
+
+1. **Ofuscación de claves:** Las claves están codificadas en el código fuente
+2. **Soporte para variables de entorno:** Configura las siguientes variables en un archivo `.env.local`:
+   ```
+   VITE_SUPABASE_URL=https://tu-proyecto.supabase.co
+   VITE_SUPABASE_ANON_KEY=tu-clave-anon
+   VITE_SUPABASE_SERVICE_KEY=tu-clave-service
+   ```
+3. **Documentación detallada:** Consulta el archivo `SECURITY.md` para más información sobre las medidas de seguridad implementadas
+
 ### Crear un usuario administrador
 
 Para crear un usuario administrador, ejecuta el siguiente comando:
@@ -91,11 +104,21 @@ node scripts/create-admin-user.js
 ```
 
 Este script creará un usuario con las siguientes credenciales por defecto:
-- Email: admin@example.com
+- Email: eduardorweb@gmail.com
 - Contraseña: admin123
 
 Puedes modificar estas credenciales editando el archivo `scripts/create-admin-user.js`.
 
+> ⚠️ **IMPORTANTE:** Cambia la contraseña por defecto después del primer inicio de sesión para mayor seguridad.
+
 ### Acceso al panel de administración
 
 Una vez creado el usuario, puedes acceder al panel de administración en la ruta `/adminpanel` e iniciar sesión con las credenciales configuradas.
+
+### Roles y permisos
+
+El sistema implementa dos roles de usuario:
+- **Admin:** Acceso completo a todas las secciones del panel (configuración general, apariencia, usuarios, menú y categorías)
+- **Staff:** Acceso limitado solo a las secciones de menú y categorías
+
+El usuario eduardorweb@gmail.com siempre tiene rol de administrador por configuración.
