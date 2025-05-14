@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { CustomerDetails } from './CustomerDetails';
 import { DeliveryDetails } from './DeliveryDetails';
@@ -25,47 +24,59 @@ const OrderForm: React.FC = () => {
   } = useOrderForm();
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-4 mb-4">
+    <div>
       <h3 className="font-bold text-lg mb-4">Información del pedido</h3>
       
       <form onSubmit={handleSubmit}>
         <div className="space-y-4">
-          <CustomerDetails 
-            name={name} 
-            setName={setName} 
-            orderType={orderType} 
-            setOrderType={setOrderType} 
-          />
-          
-          {orderType === 'delivery' && (
-            <DeliveryDetails 
-              phone={phone} 
-              setPhone={setPhone} 
-              address={address} 
-              setAddress={setAddress} 
+          <div className="p-1">
+            <CustomerDetails 
+              name={name} 
+              setName={setName} 
+              orderType={orderType} 
+              setOrderType={setOrderType} 
             />
-          )}
+            
+            {orderType === 'delivery' && (
+              <div className="mt-4 pt-4 border-t border-gray-100">
+                <DeliveryDetails 
+                  phone={phone} 
+                  setPhone={setPhone} 
+                  address={address} 
+                  setAddress={setAddress} 
+                />
+              </div>
+            )}
+            
+            <div className="mt-4 pt-4 border-t border-gray-100">
+              <PaymentMethod 
+                paymentMethod={paymentMethod} 
+                setPaymentMethod={setPaymentMethod} 
+              />
+            </div>
+            
+            {paymentMethod === 'cash' && (
+              <div className="mt-4">
+                <CashPayment 
+                  cashAmount={cashAmount} 
+                  setCashAmount={setCashAmount} 
+                />
+              </div>
+            )}
+            
+            {orderType === 'delivery' && (
+              <div className="mt-4 pt-4 border-t border-gray-100">
+                <AdditionalComments 
+                  comments={comments} 
+                  setComments={setComments} 
+                />
+              </div>
+            )}
+          </div>
           
-          <PaymentMethod 
-            paymentMethod={paymentMethod} 
-            setPaymentMethod={setPaymentMethod} 
-          />
-          
-          {paymentMethod === 'cash' && (
-            <CashPayment 
-              cashAmount={cashAmount} 
-              setCashAmount={setCashAmount} 
-            />
-          )}
-          
-          {orderType === 'delivery' && (
-            <AdditionalComments 
-              comments={comments} 
-              setComments={setComments} 
-            />
-          )}
-          
-          <SubmitButton />
+          <div className="mt-4">
+            <SubmitButton />
+          </div>
         </div>
       </form>
     </div>

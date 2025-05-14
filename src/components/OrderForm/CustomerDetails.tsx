@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
@@ -35,7 +34,7 @@ export const CustomerDetails: React.FC<CustomerDetailsProps> = ({
 
   return (
     <>
-      <div className="space-y-1">
+      <div className="space-y-1 mb-3">
         <Label htmlFor="name" className="block text-sm font-medium">Nombre</Label>
         <Input
           id="name"

@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Input } from '../ui/input';
 import { Textarea } from '../ui/textarea';
@@ -64,7 +63,7 @@ export const DeliveryDetails: React.FC<DeliveryDetailsProps> = ({
 
   return (
     <>
-      <div className="space-y-1">
+      <div className="space-y-1 mb-3">
         <Label htmlFor="phone" className="block text-sm font-medium">Teléfono <span className="text-red-500">*</span></Label>
         <Input
           id="phone"

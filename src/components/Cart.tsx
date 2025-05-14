@@ -17,12 +17,10 @@ const Cart: React.FC = () => {
   
   if (items.length === 0) {
     return (
-      <div className="bg-white rounded-lg p-4 mb-4">
-        <div className="flex flex-col items-center justify-center gap-2 text-gray-500 py-8">
-          <ShoppingCart size={32} className="text-gray-400 mb-2" />
-          <p className="text-lg">Tu carrito está vacío</p>
-          <p className="text-sm text-gray-400">Añade algunos productos para comenzar</p>
-        </div>
+      <div className="flex flex-col items-center justify-center gap-2 text-gray-500 py-8">
+        <ShoppingCart size={32} className="text-gray-400 mb-2" />
+        <p className="text-lg">Tu carrito está vacío</p>
+        <p className="text-sm text-gray-400">Añade algunos productos para comenzar</p>
       </div>
     );
   }
@@ -71,12 +69,12 @@ const Cart: React.FC = () => {
 
   if (showOrderForm) {
     return (
-      <div className="space-y-4">
+      <div className="mt-2">
         <OrderForm />
         <Button 
           variant="outline" 
           onClick={handleBackToCart}
-          className="w-full border border-gray-300 hover:bg-gray-50"
+          className="w-full border border-gray-300 hover:bg-gray-50 mt-3"
         >
           Volver al carrito
         </Button>
@@ -85,10 +83,10 @@ const Cart: React.FC = () => {
   }
 
   return (
-    <div className="bg-white rounded-lg">
+    <div>
       <div className="space-y-4">
         {items.map((item) => (
-          <div key={item.id + item.note} className="py-4 px-1 border-b border-gray-100 last:border-b-0">
+          <div key={item.id + item.note} className="py-3 px-1 border-b border-gray-100 last:border-b-0">
             <div className="flex justify-between items-center mb-2">
               <h3 className="text-base font-medium">{item.name}</h3>
               <span className="font-medium">{formatCurrency(item.price * item.quantity)}</span>

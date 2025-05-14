@@ -29,9 +29,9 @@ const FloatingCartButton = () => {
         </Button>
       </DrawerTrigger>
       <DrawerContent 
-        className="max-w-[500px] mx-auto w-[95%] h-[75vh] p-0 custom-scrollbar font-sans rounded-t-[20px] focus:outline-none shadow-xl overflow-hidden"
+        className="max-w-[500px] mx-auto w-[95%] h-[80vh] p-0 font-sans rounded-t-[20px] focus:outline-none shadow-xl flex flex-col"
       >
-        <div className="sticky top-0 z-10 bg-white pt-3 pb-2">
+        <div className="sticky top-0 z-10 bg-white pt-3 pb-2 border-b border-gray-100">
           {/* Botón para cerrar */}
           <DrawerClose className="absolute right-3 top-3 rounded-full w-8 h-8 flex items-center justify-center hover:bg-gray-100 transition-colors">
             <X className="h-5 w-5 text-gray-600" />
@@ -43,10 +43,8 @@ const FloatingCartButton = () => {
           </div>
         </div>
         
-        <div className="px-4 sm:px-6 pb-6 space-y-4 pb-safe">
-          <div className="space-y-4">
-            <Cart />
-          </div>
+        <div className="flex-1 overflow-y-auto custom-scrollbar px-4 sm:px-6 pb-6">
+          <Cart />
         </div>
       </DrawerContent>
     </Drawer>
