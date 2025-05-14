@@ -14,29 +14,53 @@ import { createClient } from '@supabase/supabase-js';
 // URL de Supabase
 const SUPABASE_URL = import.meta.env?.VITE_SUPABASE_URL || 'https://numjphltuyfbpyrnevlu.supabase.co';
 
-// Claves API - ofuscadas en comentarios para referencia
-// Clave anónima: comienza con eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-// Clave servicio: comienza con eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-
-// Claves de API con nombre ligeramente diferente para dificultar búsquedas simples
-const anon_api_key = import.meta.env?.VITE_SUPABASE_ANON_KEY || 
+// Claves API
+const ANON_KEY = import.meta.env?.VITE_SUPABASE_ANON_KEY || 
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im51bWpwaGx0dXlmYnB5cm5ldmx1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDcyMjkzMDUsImV4cCI6MjA2MjgwNTMwNX0.Tzz4PO4bex6-UvaDrLs4FnN8y3x72liy5BoluRnOvCI';
 
-const service_api_key = import.meta.env?.VITE_SUPABASE_SERVICE_KEY || 
+const SERVICE_KEY = import.meta.env?.VITE_SUPABASE_SERVICE_KEY || 
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im51bWpwaGx0dXlmYnB5cm5ldmx1Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc0NzIyOTMwNSwiZXhwIjoyMDYyODA1MzA1fQ.LXilXr4H0Hzs3KeEqJPZlS4iJKrr4_GUP7FmPUJvp7c';
 
-// Valores públicos para exportar
+// Función para validar que una clave tenga el formato JWT correcto
+const validateKey = (key: string, role: string): boolean => {
+  try {
+    const parts = key.split('.');
+    if (parts.length !== 3) return false;
+    
+    const payload = JSON.parse(atob(parts[1]));
+    return payload.role === role;
+  } catch (e) {
+    console.error('Error validando clave API:', e);
+    return false;
+  }
+};
+
+// Validar claves antes de inicializar clientes
+if (!validateKey(ANON_KEY, 'anon')) {
+  console.error('ERROR: La clave anónima no tiene el formato correcto o no contiene el rol "anon"');
+}
+
+if (!validateKey(SERVICE_KEY, 'service_role')) {
+  console.error('ERROR: La clave de servicio no tiene el formato correcto o no contiene el rol "service_role"');
+}
+
+// Crear cliente estándar para operaciones regulares
+const supabase = createClient(SUPABASE_URL, ANON_KEY);
+
+// Crear cliente con permisos administrativos (service_role)
+export const supabaseAdmin = createClient(SUPABASE_URL, SERVICE_KEY, {
+  auth: {
+    autoRefreshToken: false,
+    persistSession: false
+  }
+});
+
+// Exportar URL y funciones para obtener claves
 export const supabaseUrl = SUPABASE_URL;
-export const getSupabaseAnonKey = () => anon_api_key;
-export const getSupabaseServiceKey = () => service_api_key;
+export const getAnonKey = () => ANON_KEY;
+export const getServiceKey = () => SERVICE_KEY;
 
-// Cliente estándar para operaciones regulares
-const supabase = createClient(supabaseUrl, anon_api_key);
-
-// Cliente con permisos administrativos
-export const supabaseAdmin = createClient(supabaseUrl, service_api_key);
-
-// Prevenir exposición accidental de claves en consola
+// Proteger contra exposición accidental en consola
 Object.defineProperty(supabase, 'toString', {
   value: () => '[Objeto Supabase - Claves ocultas]',
   writable: false
@@ -47,9 +71,9 @@ Object.defineProperty(supabaseAdmin, 'toString', {
   writable: false
 });
 
-// Log de configuración segura (sin mostrar las claves completas)
+// Log para confirmar inicialización
 console.log(`Supabase configurado para: ${SUPABASE_URL}`);
-console.log('Tipo de cliente anónimo: ' + (anon_api_key.includes('anon') ? 'anon' : 'desconocido'));
-console.log('Tipo de cliente admin: ' + (service_api_key.includes('service_role') ? 'service_role' : 'desconocido'));
+console.log(`Cliente anónimo inicializado: ${validateKey(ANON_KEY, 'anon') ? 'OK' : 'ERROR'}`);
+console.log(`Cliente admin inicializado: ${validateKey(SERVICE_KEY, 'service_role') ? 'OK' : 'ERROR'}`);
 
 export default supabase; 
