@@ -3,6 +3,14 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import supabase from '../lib/supabase';
 import { useConfig } from '../context/ConfigContext';
 
+interface AuthParams {
+  access_token: string;
+  refresh_token: string;
+  expires_in: number;
+  token_type: string;
+  type: string;
+}
+
 const ResetPassword: React.FC = () => {
   const { config } = useConfig();
   const navigate = useNavigate();
@@ -12,15 +20,27 @@ const ResetPassword: React.FC = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [message, setMessage] = useState<{ text: string; type: 'success' | 'error' } | null>(null);
   const [loading, setLoading] = useState(false);
-  const [accessToken, setAccessToken] = useState<string | null>(null);
+  const [authParams, setAuthParams] = useState<AuthParams | null>(null);
 
-  // Extraer el token de acceso del hash de la URL
+  // Extraer los parámetros de autenticación del hash de la URL
   useEffect(() => {
+    console.log("URL hash:", location.hash);
+    
     const hash = location.hash;
     if (hash) {
-      const params = new URLSearchParams(hash.replace('#', ''));
-      const token = params.get('access_token');
-      setAccessToken(token);
+      const hashParams = new URLSearchParams(hash.replace('#', ''));
+      
+      // Extraer todos los parámetros necesarios
+      const params: any = {};
+      hashParams.forEach((value, key) => {
+        params[key] = value;
+      });
+      
+      console.log("Extracted params:", params);
+      
+      if (params.access_token) {
+        setAuthParams(params as AuthParams);
+      }
     }
   }, [location]);
 
@@ -41,27 +61,39 @@ const ResetPassword: React.FC = () => {
     setMessage(null);
     
     try {
-      // Si tenemos un token de acceso, establecer la sesión primero
-      if (accessToken) {
+      console.log("Intentando cambiar contraseña con tokens:", authParams);
+      
+      // Si tenemos los parámetros de autenticación, establecer la sesión primero
+      if (authParams) {
+        console.log("Estableciendo sesión con tokens...");
+        
         const { error: sessionError } = await supabase.auth.setSession({
-          access_token: accessToken,
-          refresh_token: '',
+          access_token: authParams.access_token,
+          refresh_token: authParams.refresh_token || '',
         });
         
         if (sessionError) {
+          console.error("Error al establecer sesión:", sessionError);
           throw new Error(`Error al establecer la sesión: ${sessionError.message}`);
         }
+        
+        console.log("Sesión establecida correctamente");
+      } else {
+        throw new Error("No se encontraron tokens de autenticación en la URL");
       }
       
       // Actualizar la contraseña
+      console.log("Actualizando contraseña...");
       const { error } = await supabase.auth.updateUser({
         password: password,
       });
       
       if (error) {
+        console.error("Error al actualizar contraseña:", error);
         throw error;
       }
       
+      console.log("Contraseña actualizada correctamente");
       setMessage({ 
         text: 'Contraseña actualizada correctamente. Serás redirigido al panel de administración...', 
         type: 'success' 
@@ -73,6 +105,7 @@ const ResetPassword: React.FC = () => {
       }, 3000);
       
     } catch (error: any) {
+      console.error("Error completo:", error);
       setMessage({ 
         text: `Error al actualizar la contraseña: ${error.message}`, 
         type: 'error' 
@@ -89,9 +122,13 @@ const ResetPassword: React.FC = () => {
           Restablecer Contraseña
         </h1>
         
-        {!accessToken && (
+        {!authParams && (
           <div className="p-4 mb-4 bg-yellow-100 text-yellow-800 rounded">
             <p>No se ha detectado un token de acceso válido en la URL. Si llegaste aquí desde un enlace de restablecimiento de contraseña, asegúrate de usar el enlace completo del correo electrónico.</p>
+            
+            <div className="mt-2 text-sm">
+              <p>URL actual: {window.location.href}</p>
+            </div>
           </div>
         )}
         
@@ -129,7 +166,7 @@ const ResetPassword: React.FC = () => {
               type="submit"
               className="w-full py-2 px-4 text-white font-medium rounded"
               style={{ backgroundColor: config.theme.primaryColor }}
-              disabled={loading || !accessToken}
+              disabled={loading || !authParams}
             >
               {loading ? 'Actualizando...' : 'Actualizar Contraseña'}
             </button>

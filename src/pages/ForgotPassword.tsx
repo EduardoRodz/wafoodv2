@@ -23,20 +23,25 @@ const ForgotPassword: React.FC = () => {
     setMessage(null);
     
     try {
+      console.log("Enviando solicitud de restablecimiento para:", email);
+      
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: 'https://wafoodv2.netlify.app/reset-password',
+        redirectTo: window.location.origin + '/reset-password',
       });
       
       if (error) {
+        console.error("Error al solicitar restablecimiento:", error);
         throw error;
       }
       
+      console.log("Solicitud de restablecimiento enviada correctamente");
       setMessage({ 
-        text: 'Se ha enviado un enlace de restablecimiento de contraseña a tu correo electrónico', 
+        text: 'Se ha enviado un enlace de restablecimiento de contraseña a tu correo electrónico. Por favor revisa tu bandeja de entrada y también la carpeta de spam.', 
         type: 'success' 
       });
       
     } catch (error: any) {
+      console.error("Error completo:", error);
       setMessage({ 
         text: `Error al enviar el correo de restablecimiento: ${error.message}`, 
         type: 'error' 
@@ -63,6 +68,7 @@ const ForgotPassword: React.FC = () => {
                 onChange={(e) => setEmail(e.target.value)}
                 className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary"
                 disabled={loading}
+                placeholder="Ingresa el correo con el que te registraste"
               />
             </div>
             

@@ -8,6 +8,9 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 // Correo del usuario administrador
 const ADMIN_EMAIL = 'eduardorweb@gmail.com';
 
+// URL base del sitio
+const SITE_URL = 'https://wafoodv2.netlify.app';
+
 async function testPasswordReset() {
   try {
     console.log('Iniciando prueba de restablecimiento de contraseña...');
@@ -18,7 +21,7 @@ async function testPasswordReset() {
     // Solicitar restablecimiento de contraseña
     console.log(`1. Enviando correo de restablecimiento a ${ADMIN_EMAIL}...`);
     const { data, error } = await supabase.auth.resetPasswordForEmail(ADMIN_EMAIL, {
-      redirectTo: 'https://wafoodv2.netlify.app/reset-password',
+      redirectTo: `${SITE_URL}/reset-password`,
     });
     
     if (error) {
@@ -27,10 +30,11 @@ async function testPasswordReset() {
     
     console.log('✅ Correo de restablecimiento enviado correctamente');
     console.log('\nInstrucciones:');
-    console.log('1. Revisa tu bandeja de entrada y correo no deseado para encontrar el email');
+    console.log('1. Revisa tu bandeja de entrada y carpeta de spam para encontrar el email');
     console.log('2. Haz clic en el enlace de restablecimiento que te llevará a la aplicación');
     console.log('3. En la página de restablecimiento, ingresa tu nueva contraseña');
     console.log('4. Una vez cambiada, podrás iniciar sesión con la nueva contraseña');
+    console.log('\nURL de redirección configurada:', `${SITE_URL}/reset-password`);
     
   } catch (error) {
     console.error('\n❌ Error en la prueba:', error.message);
