@@ -181,6 +181,15 @@ const AdminPanel: React.FC = () => {
             >
               Iniciar Sesión
             </button>
+            
+            <div className="text-center mt-2">
+              <a 
+                href="/forgot-password" 
+                className="text-sm text-gray-600 hover:underline"
+              >
+                ¿Olvidaste tu contraseña?
+              </a>
+            </div>
           </div>
           
           <div className="mt-4 text-center text-sm text-gray-500">
