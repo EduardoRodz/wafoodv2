@@ -1,4 +1,4 @@
-import supabase from '../lib/supabase';
+import supabase, { supabaseAdmin } from '../lib/supabase';
 
 export interface User {
   id: string;
@@ -25,7 +25,7 @@ export interface UpdateUserData {
 export const getUsers = async (): Promise<User[]> => {
   try {
     // Primero consultamos la tabla de autenticación para obtener todos los usuarios
-    const { data: authUsers, error: authError } = await supabase.auth.admin.listUsers();
+    const { data: authUsers, error: authError } = await supabaseAdmin.auth.admin.listUsers();
     
     if (authError) {
       throw authError;
@@ -69,8 +69,8 @@ export const getUsers = async (): Promise<User[]> => {
 // Crear un nuevo usuario
 export const createUser = async (userData: CreateUserData): Promise<{ user: User | null; error: Error | null }> => {
   try {
-    // Crear usuario en autenticación
-    const { data: authData, error: authError } = await supabase.auth.admin.createUser({
+    // Crear usuario en autenticación usando el cliente de administración
+    const { data: authData, error: authError } = await supabaseAdmin.auth.admin.createUser({
       email: userData.email,
       password: userData.password,
       email_confirm: true
@@ -122,7 +122,7 @@ export const updateUser = async (userData: UpdateUserData): Promise<{ success: b
       if (userData.email) updateData.email = userData.email;
       if (userData.password) updateData.password = userData.password;
       
-      const { error: authError } = await supabase.auth.admin.updateUserById(
+      const { error: authError } = await supabaseAdmin.auth.admin.updateUserById(
         userData.id,
         updateData
       );
@@ -178,7 +178,7 @@ export const updateUser = async (userData: UpdateUserData): Promise<{ success: b
 export const deleteUser = async (userId: string): Promise<{ success: boolean; error: Error | null }> => {
   try {
     // Eliminar usuario de autenticación
-    const { error: authError } = await supabase.auth.admin.deleteUser(userId);
+    const { error: authError } = await supabaseAdmin.auth.admin.deleteUser(userId);
     
     if (authError) {
       throw authError;
