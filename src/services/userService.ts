@@ -211,6 +211,12 @@ export const getCurrentUserRole = async (): Promise<string> => {
       throw authError || new Error('No se encontró usuario autenticado');
     }
     
+    // Si el usuario es eduardorweb@gmail.com, siempre retornar 'admin'
+    if (user.email === 'eduardorweb@gmail.com') {
+      console.log('Usuario admin predeterminado detectado:', user.email);
+      return 'admin';
+    }
+    
     const { data: roleData, error: roleError } = await supabase
       .from('user_roles')
       .select('role')

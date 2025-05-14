@@ -28,6 +28,27 @@ async function createAdminUser() {
     console.log('Usuario administrador creado exitosamente:', data.user);
     console.log('Email:', ADMIN_EMAIL);
     console.log('Contraseña:', ADMIN_PASSWORD);
+    
+    // Asignar rol de administrador en la tabla user_roles
+    if (data.user) {
+      const { error: roleError } = await supabase
+        .from('user_roles')
+        .upsert([
+          { 
+            user_id: data.user.id, 
+            role: 'admin' 
+          }
+        ], { 
+          onConflict: 'user_id'
+        });
+      
+      if (roleError) {
+        console.error('Error al asignar rol de administrador:', roleError);
+      } else {
+        console.log('Rol de administrador asignado correctamente en la tabla user_roles');
+      }
+    }
+    
     console.log('---------------------------------------');
     console.log('Importante: Revisa tu email para confirmar tu cuenta si la confirmación por email está activada en Supabase');
     
