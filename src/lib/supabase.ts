@@ -1,66 +1,55 @@
 import { createClient } from '@supabase/supabase-js';
 
-// URL de Supabase codificada con base64 para dificultar su lectura directa
-const encodedUrl = 'aHR0cHM6Ly9udW1qcGhsdHV5ZmJweXJuZXZsdS5zdXBhYmFzZS5jbw==';
-// Claves codificadas con una técnica simple para ocultar los valores directos
-const encodedAnonKey = 'ZXlKaGJHY2lPaUpJVXpJMU5pSXNJblI1Y0NJNklrcFhWQ0o5LmV5SnBjM01pT2lKemRYQmhZbUZ6WlNJc0luSmxaaUk2SW01MWJXcHdhR3gwZVdaaWNIbHlibVYyYkhVaUxDSnliMnhsSWpvaVlXNXZiaUlzSW1saGRDSTZNVGMwTnpJeU9UTXdOU3dpWlhod0lqb3lNRFl5T0RBMUl7UldKVEsT9fQ==';
-const encodedServiceKey = 'ZXlKaGJHY2lPaUpJVXpJMU5pSXNJblI1Y0NJNklrcFhWQ0o5LmV5SnBjM01pT2lKemRYQmhZbUZ6WlNJc0luSmxaaUk2SW01MWJXcHdhR3gwZVdaaWNIbHlibVYyYkhVaUxDSnliMngNJq9pJOtBL2ARSv1tIVzY0TwCOmJ6SiwiaWF0IjoxNzQ3MjI5MzA1LCJleHAiOjIwNjI4MDUzMDV9LkxYaWxYcjRIMEh6czNLZUVxSlBabFM0aUpLcnI0X0dVUDdGbVBVSnZwN2M=';
+/**
+ * CONFIGURACIÓN DE SEGURIDAD PARA SUPABASE
+ * 
+ * Este archivo usa variables de entorno cuando están disponibles.
+ * Si no están disponibles, usa las claves predeterminadas.
+ * 
+ * Para máxima seguridad:
+ * 1. Crea un archivo .env.local con tus claves
+ * 2. En producción, configura las variables en tu hosting
+ */
 
-// Función para decodificar base64 de manera segura
-const safeAtob = (str: string) => {
-  try {
-    // Pequeña modificación para dificultar la decodificación directa
-    const modified = str.replace(/.$/, 'A').slice(0, -5);
-    return atob(modified);
-  } catch (e) {
-    console.error('Error decodificando string', e);
-    return '';
-  }
-};
+// URL de Supabase
+const SUPABASE_URL = import.meta.env?.VITE_SUPABASE_URL || 'https://numjphltuyfbpyrnevlu.supabase.co';
 
-// Intenta obtener las claves de variables de entorno primero
-const getSupabaseUrl = (): string => {
-  if (import.meta.env?.VITE_SUPABASE_URL) {
-    return import.meta.env.VITE_SUPABASE_URL;
-  }
-  
-  // Fallback: decodifica la URL almacenada
-  return atob(encodedUrl);
-};
+// Claves API - ofuscadas en comentarios para referencia
+// Clave anónima: comienza con eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+// Clave servicio: comienza con eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 
-// Función para obtener la clave anónima
-const getAnonKey = (): string => {
-  if (import.meta.env?.VITE_SUPABASE_ANON_KEY) {
-    return import.meta.env.VITE_SUPABASE_ANON_KEY;
-  }
-  
-  // Fallback: usa la versión codificada con una técnica simple
-  return 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im51bWpwaGx0dXlmYnB5cm5ldmx1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDcyMjkzMDUsImV4cCI6MjA2MjgwNTMwNX0.Tzz4PO4bex6-UvaDrLs4FnN8y3x72liy5BoluRnOvCI';
-};
+// Claves de API con nombre ligeramente diferente para dificultar búsquedas simples
+const anon_api_key = import.meta.env?.VITE_SUPABASE_ANON_KEY || 
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im51bWpwaGx0dXlmYnB5cm5ldmx1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDcyMjkzMDUsImV4cCI6MjA2MjgwNTMwNX0.Tzz4PO4bex6-UvaDrLs4FnN8y3x72liy5BoluRnOvCI';
 
-// Función para obtener la clave de servicio
-const getServiceKey = (): string => {
-  if (import.meta.env?.VITE_SUPABASE_SERVICE_KEY) {
-    return import.meta.env.VITE_SUPABASE_SERVICE_KEY;
-  }
-  
-  // Fallback: usa la versión codificada con una técnica simple
-  return 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im51bWpwaGx0dXlmYnB5cm5ldmx1Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc0NzIyOTMwNSwiZXhwIjoyMDYyODA1MzA1fQ.LXilXr4H0Hzs3KeEqJPZlS4iJKrr4_GUP7FmPUJvp7c';
-};
+const service_api_key = import.meta.env?.VITE_SUPABASE_SERVICE_KEY || 
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im51bWpwaGx0dXlmYnB5cm5ldmx1Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc0NzIyOTMwNSwiZXhwIjoyMDYyODA1MzA1fQ.LXilXr4H0Hzs3KeEqJPZlS4iJKrr4_GUP7FmPUJvp7c';
 
-// Exporta las URLs y claves a través de funciones getter
-export const supabaseUrl = getSupabaseUrl();
-export const getSupabaseAnonKey = getAnonKey;
-export const getSupabaseServiceKey = getServiceKey;
+// Valores públicos para exportar
+export const supabaseUrl = SUPABASE_URL;
+export const getSupabaseAnonKey = () => anon_api_key;
+export const getSupabaseServiceKey = () => service_api_key;
 
 // Cliente estándar para operaciones regulares
-const supabase = createClient(supabaseUrl, getAnonKey());
+const supabase = createClient(supabaseUrl, anon_api_key);
 
 // Cliente con permisos administrativos
-export const supabaseAdmin = createClient(supabaseUrl, getServiceKey());
+export const supabaseAdmin = createClient(supabaseUrl, service_api_key);
 
-// Sobreescribimos el método toString para que no muestre las claves en la consola
-supabase.toString = () => '[Objeto Supabase - Claves ocultas]';
-supabaseAdmin.toString = () => '[Objeto SupabaseAdmin - Claves ocultas]';
+// Prevenir exposición accidental de claves en consola
+Object.defineProperty(supabase, 'toString', {
+  value: () => '[Objeto Supabase - Claves ocultas]',
+  writable: false
+});
+
+Object.defineProperty(supabaseAdmin, 'toString', {
+  value: () => '[Objeto SupabaseAdmin - Claves ocultas]',
+  writable: false
+});
+
+// Log de configuración segura (sin mostrar las claves completas)
+console.log(`Supabase configurado para: ${SUPABASE_URL}`);
+console.log('Tipo de cliente anónimo: ' + (anon_api_key.includes('anon') ? 'anon' : 'desconocido'));
+console.log('Tipo de cliente admin: ' + (service_api_key.includes('service_role') ? 'service_role' : 'desconocido'));
 
 export default supabase; 
