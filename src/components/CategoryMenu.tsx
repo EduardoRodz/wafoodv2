@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { config } from '../config';
 import { useIsMobile } from '../hooks/use-mobile';
@@ -9,12 +8,20 @@ const CategoryMenu: React.FC = () => {
   const handleCategoryClick = (categoryId: string) => {
     const element = document.getElementById(categoryId);
     if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
+      // Ajustamos el scroll para considerar el menú fijo
+      const menuHeight = document.querySelector('.category-menu')?.clientHeight || 0;
+      const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
+      window.scrollTo({
+        top: elementPosition - menuHeight - 16, // 16px de margen adicional
+        behavior: 'smooth'
+      });
     }
   };
 
   return (
-    <div className="overflow-x-auto mb-4 bg-background pb-2 pt-2">
+    <div 
+      className="sticky top-0 overflow-x-auto mb-2 bg-background pb-2 pt-2 category-menu z-10"
+    >
       <div className={`flex gap-2 ${isMobile ? 'px-1' : ''}`}>
         {config.categories.map((category) => (
           <button

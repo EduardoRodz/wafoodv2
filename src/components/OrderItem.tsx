@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { MenuItem } from '../config';
 import { useCart } from '../context/CartContext';
@@ -44,13 +43,13 @@ const OrderItem: React.FC<OrderItemProps> = ({ item }) => {
   };
 
   return (
-    <div className="bg-white rounded-lg overflow-hidden shadow-sm border border-gray-100 transition-transform duration-150 ease-in-out hover:scale-[1.01]"
+    <div className="bg-white rounded-lg overflow-hidden shadow-sm border border-gray-100 transition-transform duration-150 ease-in-out hover:scale-[1.01] max-w-xs mx-auto w-full"
          style={{
            '--tw-shadow': '0 4px 6px -1px rgb(0 0 0 / .1), 0 2px 4px -2px rgb(0 0 0 / .1)',
            '--tw-shadow-colored': '0 4px 6px -1px var(--tw-shadow-color), 0 2px 4px -2px var(--tw-shadow-color)',
            boxShadow: 'var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)'
          } as React.CSSProperties}>
-      <div className="w-full h-48 overflow-hidden">
+      <div className="w-full h-40 overflow-hidden">
         <img 
           src={item.image} 
           alt={item.name} 
@@ -58,28 +57,28 @@ const OrderItem: React.FC<OrderItemProps> = ({ item }) => {
         />
       </div>
       
-      <div className="p-4 space-y-3">
-        <h3 className="font-bold text-lg text-left">{item.name}</h3>
-        <p className="text-gray-600 text-sm text-left">{item.description}</p>
+      <div className="p-3 space-y-2">
+        <h3 className="font-bold text-base text-left">{item.name}</h3>
+        <p className="text-gray-600 text-xs text-left">{item.description}</p>
         
         <div className="flex justify-between items-center">
           <p className="font-bold text-lg text-green-800">{formatCurrency(item.price)}</p>
           
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
             <button 
               onClick={decreaseTemp}
-              className="rounded-full w-8 h-8 flex items-center justify-center border border-gray-300 bg-white text-gray-700 hover:bg-gray-100"
+              className="rounded-full w-7 h-7 flex items-center justify-center border border-gray-300 bg-white text-gray-700 hover:bg-gray-100"
             >
-              <Minus size={16} />
+              <Minus size={14} />
             </button>
             
-            <span className="font-medium text-lg w-4 text-center">{tempQuantity}</span>
+            <span className="font-medium text-base w-4 text-center">{tempQuantity}</span>
             
             <button 
               onClick={increaseTemp}
-              className="rounded-full w-8 h-8 flex items-center justify-center border border-gray-300 bg-white text-gray-700 hover:bg-gray-100"
+              className="rounded-full w-7 h-7 flex items-center justify-center border border-gray-300 bg-white text-gray-700 hover:bg-gray-100"
             >
-              <Plus size={16} />
+              <Plus size={14} />
             </button>
           </div>
         </div>
@@ -87,7 +86,7 @@ const OrderItem: React.FC<OrderItemProps> = ({ item }) => {
         <div className="space-y-2">
           <button 
             onClick={() => setShowNote(!showNote)}
-            className="text-sm text-gray-500 hover:text-primary font-medium mx-auto block"
+            className="text-xs text-gray-500 hover:text-primary font-medium mx-auto block"
           >
             {showNote ? 'Ocultar notas' : note ? 'Editar notas' : 'Agregar notas'}
           </button>
@@ -97,20 +96,20 @@ const OrderItem: React.FC<OrderItemProps> = ({ item }) => {
               value={note}
               onChange={(e) => setNote(e.target.value)}
               placeholder="Ej: Ponle picante"
-              className="w-full p-2 border border-gray-300 rounded text-sm"
+              className="w-full p-2 border border-gray-300 rounded text-xs"
               rows={2}
             />
           )}
           
           <Button 
             onClick={handleAddToCart} 
-            className="w-full text-white flex items-center justify-center gap-2"
+            className="w-full text-white flex items-center justify-center gap-1 py-1 text-sm"
             style={{ 
               backgroundColor: tempQuantity > 0 ? config.theme.cartButtonColor : 'black',
             }}
             disabled={tempQuantity === 0}
           >
-            <Plus size={16} /> Agregar al pedido
+            <Plus size={14} /> Agregar al pedido
           </Button>
         </div>
       </div>

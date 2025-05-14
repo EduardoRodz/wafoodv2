@@ -1,4 +1,3 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -52,8 +51,48 @@
   }
 }
 
+/* Estilos personalizados para la barra de desplazamiento */
+.custom-scrollbar {
+  overflow-y: auto; /* Asegúrate que el overflow esté habilitado */
+  scrollbar-width: thin; /* Para Firefox */
+  scrollbar-color: rgba(209, 213, 219, 0.4) transparent; /* Para Firefox */
+}
+
+/* Estilo para navegadores webkit (Chrome, Safari, Edge) */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px; /* Ancho reducido para ser más sutil */
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+  margin: 2px;
+  margin-right: 2px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: rgba(209, 213, 219, 0.4); /* Color más sutil con transparencia */
+  border-radius: 20px;
+  border: none;
+  transition: background-color 0.3s ease;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(156, 163, 175, 0.6); /* Más oscuro al pasar el mouse */
+}
+
+/* Estilo para hacer que el scrollbar aparezca solo cuando se hace hover - opcional */
+.custom-scrollbar:not(:hover)::-webkit-scrollbar-thumb {
+  background-color: rgba(209, 213, 219, 0.2); /* Casi invisible cuando no hay hover */
+}
+
+/* Contenedor con padding para evitar que la barra de desplazamiento tape el contenido */
+.scroll-container {
+  padding-right: 8px;
+  margin-right: -4px; /* Ajustado para compensar el ancho de la barra */
+}
+
 .category-title {
-  @apply flex items-center gap-2 font-bold text-lg md:text-xl mb-3 mt-6 md:mb-4 md:mt-8;
+  @apply flex items-center gap-2 font-bold text-lg md:text-xl mb-3 mt-2 md:mb-4 md:mt-4;
 }
 
 .card-item {
@@ -76,10 +115,91 @@
   @apply bg-black hover:bg-primary text-white font-bold py-2 w-full rounded flex items-center justify-center gap-2 mt-2 transition-all;
 }
 
+/* Estilos para el menú de categorías fijo */
+.category-menu {
+  position: sticky;
+  transition: background-color 0.2s ease;
+}
+
+/* Efecto de desvanecimiento en los bordes al hacer scroll horizontal */
+.category-menu::before,
+.category-menu::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 30px;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.category-menu::before {
+  left: 0;
+  background: linear-gradient(to right, rgba(255, 255, 255, 1), rgba(255, 255, 255, 0));
+}
+
+.category-menu::after {
+  right: 0;
+  background: linear-gradient(to left, rgba(255, 255, 255, 1), rgba(255, 255, 255, 0));
+}
+
+/* Estilos para el carrito que sale desde abajo */
+[data-state="open"][data-side="bottom"] {
+  animation: slide-up-fade 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 -10px 25px -5px rgba(0, 0, 0, 0.1), 0 -8px 10px -6px rgba(0, 0, 0, 0.05);
+}
+
+[data-state="closed"][data-side="bottom"] {
+  animation: slide-down-fade 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slide-up-fade {
+  from {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slide-down-fade {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+}
+
+/* Overlay mejorado para el carrito */
+[data-state="open"] + .fixed[data-state="open"] {
+  backdrop-filter: blur(2px);
+  transition: backdrop-filter 0.3s ease, background-color 0.3s ease;
+}
+
+/* Indicador de deslizamiento */
+[data-swipe-handle] .rounded-full {
+  transition: width 0.2s ease, background-color 0.2s ease;
+}
+
+[data-swipe-handle]:active .rounded-full {
+  width: 40px;
+  background-color: #777;
+}
+
+/* Utilidad para asegurar que el padding en la parte inferior respeta el área segura en dispositivos móviles */
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom, 1rem);
+}
+
 /* Mobile optimizations */
 @media (max-width: 640px) {
   .category-title {
-    @apply text-base font-bold mb-2 mt-4;
+    @apply text-base font-bold mb-2 mt-2;
   }
   
   .item-info {
