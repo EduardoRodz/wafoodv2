@@ -78,7 +78,16 @@ const supabase = createClient(SUPABASE_URL, ANON_KEY);
 export const supabaseAdmin = createClient(SUPABASE_URL, SERVICE_KEY, {
   auth: {
     autoRefreshToken: false,
-    persistSession: false
+    persistSession: false,
+    detectSessionInUrl: false // Desactivar detección de sesión en URL para cliente admin
+  },
+  // Configuración específica para las APIs administrativas
+  global: {
+    // Asegurar que el token se pasa en todos los headers como apikey
+    headers: {
+      Authorization: `Bearer ${SERVICE_KEY}`,
+      apikey: SERVICE_KEY
+    }
   }
 });
 
@@ -102,5 +111,18 @@ Object.defineProperty(supabaseAdmin, 'toString', {
 console.log(`Supabase configurado para: ${SUPABASE_URL}`);
 console.log(`Cliente anónimo inicializado: ${validateKey(ANON_KEY, 'anon') ? 'OK' : 'ERROR'}`);
 console.log(`Cliente admin inicializado: ${validateKey(SERVICE_KEY, 'service_role') ? 'OK' : 'ERROR'}`);
+
+// Verificar que el cliente admin está correctamente configurado
+console.log("Cliente admin inicializado con rol:", validateKey(SERVICE_KEY, 'service_role') ? 'service_role' : 'ERROR');
+// Verificar que el cliente tenga permisos para acceder a la API de admin
+supabaseAdmin.auth.admin.listUsers().then(({ data, error }) => {
+  if (error) {
+    console.error("ERROR: El cliente admin no tiene permisos para acceder a la API de admin:", error.message);
+  } else {
+    console.log("Cliente admin verificado: Acceso a API de admin funcionando correctamente");
+  }
+}).catch(err => {
+  console.error("ERROR crítico con cliente admin:", err.message);
+});
 
 export default supabase; 

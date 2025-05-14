@@ -28,7 +28,7 @@ export const defaultConfig = {
     primaryColor: "#004d2a", // Dark green
     accentColor: "#00873e", // Light green
     textColor: "#333333",
-    backgroundColor: "#f5f5f5",
+    backgroundColor: "#FFFFFF",
     cartButtonColor: "#003b29", // Added cart button color configuration
     floatingCartButtonColor: "#003b29", // Floating cart button color
   },
