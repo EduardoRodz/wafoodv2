@@ -3,6 +3,7 @@ import { config as defaultConfig } from '../config';
 import { ColorPicker, CategoryEditor, MenuItemEditor, GeneralSettings } from '../components/admin';
 import { X, Save, LogOut } from 'lucide-react';
 import { useConfig } from '../context/ConfigContext';
+import { useAuth } from '../context/AuthContext';
 
 // Tipo para nuestro archivo de configuración editable
 interface EditableConfig {
@@ -39,8 +40,8 @@ interface EditableConfig {
 
 const AdminPanel: React.FC = () => {
   const { config, saveConfig } = useConfig();
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [username, setUsername] = useState('');
+  const { user, loading, login, logout } = useAuth();
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loginError, setLoginError] = useState('');
   const [editableConfig, setEditableConfig] = useState<EditableConfig>(JSON.parse(JSON.stringify(config)));
@@ -48,37 +49,33 @@ const AdminPanel: React.FC = () => {
   const [hasChanges, setHasChanges] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
 
-  // Credenciales de demostración (en una app real, esto estaría en el backend)
-  const DEMO_USERNAME = 'admin';
-  const DEMO_PASSWORD = 'admin123';
-
   // Actualizar la copia editable cuando cambia la configuración
   useEffect(() => {
     setEditableConfig(JSON.parse(JSON.stringify(config)));
   }, [config]);
 
-  // Autenticar usuario
-  const handleLogin = () => {
-    if (username === DEMO_USERNAME && password === DEMO_PASSWORD) {
-      setIsAuthenticated(true);
+  // Autenticar usuario con Supabase
+  const handleLogin = async () => {
+    try {
       setLoginError('');
-      // Guardar estado de autenticación en localStorage (para mantener la sesión)
-      localStorage.setItem('adminAuthenticated', 'true');
-    } else {
-      setLoginError('Usuario o contraseña incorrectos');
+      const { success, error } = await login({ email, password });
+      
+      if (!success) {
+        setLoginError(error?.message || 'Error al iniciar sesión');
+      }
+    } catch (error) {
+      console.error('Error en login:', error);
+      setLoginError('Error inesperado al iniciar sesión');
     }
   };
 
-  const handleLogout = () => {
-    setIsAuthenticated(false);
-    localStorage.removeItem('adminAuthenticated');
+  const handleLogout = async () => {
+    try {
+      await logout();
+    } catch (error) {
+      console.error('Error en logout:', error);
+    }
   };
-
-  // Verificar si ya está autenticado al cargar
-  useEffect(() => {
-    const isAuth = localStorage.getItem('adminAuthenticated') === 'true';
-    setIsAuthenticated(isAuth);
-  }, []);
 
   // Actualizar la configuración
   const handleConfigChange = (newConfig: EditableConfig) => {
@@ -130,8 +127,21 @@ const AdminPanel: React.FC = () => {
     updateConfigSection('categories', newCategories);
   };
 
+  // Si está cargando, mostrar indicador
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen" style={{ backgroundColor: config.theme.backgroundColor }}>
+        <div className="text-center">
+          <div className="w-12 h-12 border-4 border-t-primary rounded-full animate-spin mx-auto mb-4" 
+               style={{ borderTopColor: config.theme.primaryColor }}></div>
+          <p className="text-gray-600">Cargando...</p>
+        </div>
+      </div>
+    );
+  }
+
   // Página de login
-  if (!isAuthenticated) {
+  if (!user) {
     return (
       <div className="min-h-screen flex items-center justify-center p-4" style={{ backgroundColor: config.theme.backgroundColor }}>
         <div className="w-full max-w-md p-6 bg-white rounded-lg shadow-md">
@@ -141,11 +151,11 @@ const AdminPanel: React.FC = () => {
           
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium mb-1">Usuario</label>
+              <label className="block text-sm font-medium mb-1">Correo electrónico</label>
               <input
-                type="text"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary"
               />
             </div>
@@ -174,7 +184,7 @@ const AdminPanel: React.FC = () => {
           </div>
           
           <div className="mt-4 text-center text-sm text-gray-500">
-            <p>Demo: Usuario: admin, Contraseña: admin123</p>
+            <p>Usa tus credenciales de Supabase para iniciar sesión</p>
           </div>
         </div>
       </div>
@@ -201,12 +211,15 @@ const AdminPanel: React.FC = () => {
             </button>
           )}
           
-          <button
-            onClick={handleLogout}
-            className="flex items-center gap-1 py-2 px-4 bg-gray-200 text-gray-800 font-medium rounded hover:bg-gray-300"
-          >
-            <LogOut size={18} /> Cerrar Sesión
-          </button>
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-gray-600">{user.email}</span>
+            <button
+              onClick={handleLogout}
+              className="flex items-center gap-1 py-2 px-4 bg-gray-200 text-gray-800 font-medium rounded hover:bg-gray-300"
+            >
+              <LogOut size={18} /> Cerrar Sesión
+            </button>
+          </div>
         </div>
       </header>
 

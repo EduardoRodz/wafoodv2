@@ -71,3 +71,31 @@ Yes, you can!
 To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
 
 Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+
+## Autenticación con Supabase
+
+Este proyecto utiliza Supabase para la autenticación del panel de administración:
+
+### Configuración
+
+- La autenticación está configurada con Supabase en `src/lib/supabase.ts`
+- El contexto de autenticación se encuentra en `src/context/AuthContext.tsx`
+- Los servicios de autenticación están en `src/services/authService.ts`
+
+### Crear un usuario administrador
+
+Para crear un usuario administrador, ejecuta el siguiente comando:
+
+```sh
+node scripts/create-admin-user.js
+```
+
+Este script creará un usuario con las siguientes credenciales por defecto:
+- Email: admin@example.com
+- Contraseña: admin123
+
+Puedes modificar estas credenciales editando el archivo `scripts/create-admin-user.js`.
+
+### Acceso al panel de administración
+
+Una vez creado el usuario, puedes acceder al panel de administración en la ruta `/adminpanel` e iniciar sesión con las credenciales configuradas.
