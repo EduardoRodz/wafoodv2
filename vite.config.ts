@@ -19,4 +19,10 @@ export default defineConfig(({ mode }) => ({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  build: {
+    outDir: 'dist',
+    emptyOutDir: true,
+    // Asegurarse de que _redirects y otros archivos de public se copien al build
+    assetsInlineLimit: 0,
+  },
 }));
