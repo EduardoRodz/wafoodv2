@@ -125,9 +125,10 @@ const Cart: React.FC = () => {
                   <textarea
                     value={editedNote}
                     onChange={(e) => setEditedNote(e.target.value)}
-                    className="w-full p-2 border border-gray-300 rounded text-sm mb-2 focus:outline-none focus:ring-1 focus:ring-primary"
+                    className="w-full p-2 border border-gray-300 rounded text-sm mb-2 focus:outline-none focus:ring-1 focus:ring-primary text-base"
                     placeholder="Agregar notas"
                     rows={2}
+                    style={{ fontSize: '16px' }}
                   />
                   <div className="flex justify-end gap-2">
                     <button 

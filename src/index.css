@@ -49,6 +49,21 @@
     @apply bg-background text-foreground;
     font-family: 'Poppins', sans-serif;
   }
+  
+  /* Prevenir zoom en inputs en dispositivos móviles */
+  input[type="text"],
+  input[type="email"],
+  input[type="tel"],
+  input[type="number"],
+  input[type="password"],
+  input[type="search"],
+  select,
+  textarea {
+    font-size: 16px !important; /* El tamaño mínimo para evitar zoom en iOS */
+    -webkit-appearance: none; /* Elimina el estilo nativo en iOS */
+    -moz-appearance: none;
+    appearance: none;
+  }
 }
 
 /* Estilos personalizados para la barra de desplazamiento */
