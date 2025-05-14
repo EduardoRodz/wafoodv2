@@ -43,7 +43,7 @@ const OrderItem: React.FC<OrderItemProps> = ({ item }) => {
   };
 
   return (
-    <div className="bg-white rounded-lg overflow-hidden shadow-sm border border-gray-100 transition-transform duration-150 ease-in-out hover:scale-[1.01] max-w-xs mx-auto w-full"
+    <div className="bg-white rounded-lg overflow-hidden shadow-sm border border-gray-100 transition-transform duration-150 ease-in-out hover:scale-[1.01] w-full max-w-full sm:max-w-xs mx-auto"
          style={{
            '--tw-shadow': '0 4px 6px -1px rgb(0 0 0 / .1), 0 2px 4px -2px rgb(0 0 0 / .1)',
            '--tw-shadow-colored': '0 4px 6px -1px var(--tw-shadow-color), 0 2px 4px -2px var(--tw-shadow-color)',
@@ -57,7 +57,7 @@ const OrderItem: React.FC<OrderItemProps> = ({ item }) => {
         />
       </div>
       
-      <div className="p-3 space-y-2">
+      <div className="p-3 sm:p-4 space-y-2">
         <h3 className="font-bold text-base text-left">{item.name}</h3>
         <p className="text-gray-600 text-xs text-left">{item.description}</p>
         

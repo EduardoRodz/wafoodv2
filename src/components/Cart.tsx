@@ -88,7 +88,7 @@ const Cart: React.FC = () => {
     <div className="bg-white rounded-lg">
       <div className="space-y-4">
         {items.map((item) => (
-          <div key={item.id + item.note} className="py-4 border-b border-gray-100 last:border-b-0">
+          <div key={item.id + item.note} className="py-4 px-1 border-b border-gray-100 last:border-b-0">
             <div className="flex justify-between items-center mb-2">
               <h3 className="text-base font-medium">{item.name}</h3>
               <span className="font-medium">{formatCurrency(item.price * item.quantity)}</span>
